@@ -1,0 +1,12 @@
+{
+  "name": "ciphercode-learning-site",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.1",
+    "google-auth-library": "^11.1.0"
+  }
+}

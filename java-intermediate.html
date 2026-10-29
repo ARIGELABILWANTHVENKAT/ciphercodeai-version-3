@@ -1,0 +1,966 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java Intermediate | CipherCodeAI</title>
+<meta name="description" content="Java roadmap and beginner course: JDK setup to classes, collections and exceptions, explained line by line.">
+<meta name="theme-color" content="#06070B"><script>document.documentElement.classList.add("js")</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* CipherCodeAI brand tokens: swap the palette here */
+:root{
+  --bg:#06070B; --text:#F3F4FA; --mute:#9AA0B8; --card:#0D0F18; --card2:#121524;
+  --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.18);
+  --violet:#7B5CFF; --violet-l:#A58BFF; --lime:#C6FF3D; --lime-edge:#7E9F1C; --red:#FF5C7A; --amber:#FFB86B;
+  --code-bg:#080A12;
+  --f-display:'Unbounded','Arial Black',system-ui,sans-serif;
+  --f-body:'Space Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --nav-h:60px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:500 1.0625rem/1.72 var(--f-body);overflow-x:hidden}
+@media (min-width:761px){body{padding-left:96px}}
+svg{max-width:100%}
+a{color:var(--lime)}
+:focus-visible{outline:2px solid var(--lime);outline-offset:3px;border-radius:6px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--lime);color:var(--bg);padding:.6rem 1rem;z-index:200;font-weight:700;border-radius:8px}
+.skip:focus{left:8px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.wm b{color:var(--lime);font-weight:700}
+
+/* cursor glow + progress */
+.glow{position:fixed;left:0;top:0;width:620px;height:620px;margin:-310px 0 0 -310px;border-radius:50%;pointer-events:none;z-index:1;
+  background:radial-gradient(circle,rgba(123,92,255,.20),rgba(123,92,255,0) 62%);transform:translate(var(--gx,-999px),var(--gy,-999px));mix-blend-mode:screen}
+.read-bar{position:fixed;top:0;left:0;right:0;height:3px;z-index:120;pointer-events:none}
+.read-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--violet),var(--lime))}
+
+/* top bar */
+.nav{position:sticky;top:0;z-index:60;min-height:var(--nav-h);display:flex;align-items:center;gap:16px;padding:6px 24px;
+  background:rgba(6,7,11,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;color:var(--text);text-decoration:none;font:700 1.05rem/1 var(--f-display);margin-right:auto;min-height:44px}
+.hexmark{color:var(--lime);display:grid;place-items:center;transition:transform .6s cubic-bezier(.2,.9,.2,1)}
+.logo:hover .hexmark{transform:rotate(60deg)}
+.nav-links{display:flex;gap:4px;flex-wrap:wrap}
+.nav-links a{color:var(--mute);text-decoration:none;padding:0 .9rem;min-height:44px;display:inline-flex;align-items:center;border-radius:999px;font-size:.92rem;transition:color .2s,background .2s}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,.06)}
+.nav-links a[aria-current]{color:var(--bg);background:var(--lime);font-weight:700}
+
+/* magnet side nav */
+.side{position:fixed;left:16px;top:50%;transform:translateY(-50%);z-index:90;display:flex;flex-direction:column;gap:10px;padding:10px;
+  background:rgba(13,15,24,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:26px}
+.side a{--s:1;--x:0px;position:relative;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;text-decoration:none;color:var(--text);
+  background:rgba(255,255,255,.05);border:1px solid var(--line);transform-origin:left center;transform:translateX(var(--x)) scale(var(--s));
+  transition:transform .14s ease-out,background .2s,color .2s,border-color .2s;will-change:transform}
+.side a.key-logo{background:var(--violet);border-color:transparent;color:#fff;box-shadow:0 3px 0 #4A2FD1}
+.side a.hot{background:var(--lime);color:var(--bg);border-color:var(--lime)}
+.side a.key-logo.hot{background:var(--violet);color:#fff;border-color:transparent;box-shadow:0 3px 0 #4A2FD1,0 0 22px rgba(123,92,255,.7)}
+.side a.active::before{content:"";position:absolute;left:-9px;top:50%;width:3px;height:20px;margin-top:-10px;border-radius:3px;background:var(--lime);box-shadow:0 0 10px var(--lime),0 0 2px var(--lime)}
+.tip{position:absolute;left:calc(100% + (12px / var(--s)));top:50%;transform:translateY(-50%) scale(calc(1 / var(--s)));transform-origin:left center;
+  background:#000;border:1px solid var(--line2);color:var(--text);font:600 .78rem/1 var(--f-mono);padding:.55rem .75rem;border-radius:999px;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity .15s}
+.side a.hot .tip,.side a:focus-visible .tip{opacity:1}
+.side a.hot .tip{color:var(--text)}
+
+/* buttons: physical keys */
+.btn{--face:var(--lime);--edge:var(--lime-edge);--fg:var(--bg);--ring:transparent;
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:48px;padding:0 1.5rem;border:0;border-radius:14px;cursor:pointer;
+  font:700 1rem/1 var(--f-body);text-decoration:none;background:var(--face);color:var(--fg);
+  box-shadow:inset 0 0 0 1px var(--ring),0 5px 0 var(--edge),0 12px 26px -8px rgba(198,255,61,.25);
+  transform:translateY(0);transition:transform .12s ease,box-shadow .12s ease,background .2s,color .2s}
+.btn:hover{transform:translateY(3px);box-shadow:inset 0 0 0 1px var(--ring),0 2px 0 var(--edge),0 6px 16px -8px rgba(198,255,61,.2)}
+.btn:active{transform:translateY(5px);box-shadow:inset 0 0 0 1px var(--ring),0 0 0 var(--edge)}
+.btn.ghost{--face:rgba(255,255,255,.04);--edge:rgba(255,255,255,.14);--fg:var(--text);--ring:var(--line2);box-shadow:inset 0 0 0 1px var(--ring),0 5px 0 var(--edge)}
+.btn.ghost:hover{--face:rgba(123,92,255,.22);box-shadow:inset 0 0 0 1px var(--violet-l),0 2px 0 var(--edge)}
+.btn.ghost:active{box-shadow:inset 0 0 0 1px var(--violet-l),0 0 0 var(--edge)}
+.btn.small{min-height:44px;padding:0 1.1rem;font-size:.92rem}
+.btn.is-done{--face:transparent;--fg:var(--lime);--ring:var(--lime);--edge:rgba(198,255,61,.35)}
+.btn.is-soon{cursor:default;opacity:.6;pointer-events:none;box-shadow:inset 0 0 0 1px var(--line2)}
+.btn-label{display:inline-block;white-space:nowrap}
+.mini{font:600 .78rem/1 var(--f-mono);color:var(--text);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:999px;padding:0 1rem;min-height:44px;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.mini:hover{background:var(--lime);color:var(--bg);border-color:var(--lime)}
+
+/* hero */
+.hero{position:relative;min-height:calc(100vh - var(--nav-h));display:flex;align-items:center;padding:56px 0 72px;overflow:hidden;
+  background:radial-gradient(ellipse 60% 60% at 78% 40%,rgba(123,92,255,.25),transparent 70%),radial-gradient(ellipse 40% 40% at 5% 100%,rgba(198,255,61,.07),transparent 70%)}
+.hero>.wrap{width:100%}
+.hero-grid{position:relative;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:40px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:.6rem;margin:0 0 22px;padding:.55rem 1rem;border:1px solid var(--line2);border-radius:999px;background:rgba(13,15,24,.7);font:600 .74rem/1.2 var(--f-mono);letter-spacing:.12em}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 10px var(--lime);animation:blink 1.4s steps(1) infinite}
+@keyframes blink{50%{opacity:.25}}
+h1{font:700 clamp(1.9rem,4.3vw,3.5rem)/1.08 var(--f-display);letter-spacing:-.02em;margin:0 0 22px;overflow-wrap:anywhere}
+h1 .l1,h1 .l2{display:block}
+h1 .l2{color:var(--lime)}
+.lede{font-size:1.2rem;line-height:1.6;max-width:34em;margin:0 0 26px;color:var(--mute)}
+.stats{display:flex;flex-wrap:wrap;gap:10px 26px;list-style:none;margin:0 0 32px;padding:0;color:var(--mute)}
+.stats strong{font:700 1.15rem var(--f-display);margin-right:.35rem;color:var(--text)}
+.hero-btns{display:flex;flex-wrap:wrap;gap:20px}
+.hero-orb{text-align:center}
+#orb{width:min(100%,540px);aspect-ratio:1/1;display:block;margin:0 auto}
+.wheel-msg{font:600 1.05rem/1.4 var(--f-mono);letter-spacing:.14em;margin:6px 0 10px;min-height:1.5em;color:var(--lime);word-break:break-word}
+.leds{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;list-style:none;margin:0 auto 10px;padding:0;max-width:340px}
+.led{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.12);transition:background .3s,box-shadow .3s}
+.led.on{background:var(--lime);box-shadow:0 0 10px var(--lime)}
+.wheel-cap{margin:0;font-size:.9rem;color:var(--mute)}
+
+/* intro */
+.intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;padding-top:72px;padding-bottom:24px}
+.h-sm{font:700 1.15rem/1.3 var(--f-display);margin:0 0 16px}
+.ticks{list-style:none;margin:0;padding:0}
+.ticks li{position:relative;padding:.5rem 0 .5rem 2rem;border-bottom:1px solid var(--line)}
+.ticks li::before{content:"";position:absolute;left:0;top:.95rem;width:.9rem;height:.5rem;border-left:3px solid var(--lime);border-bottom:3px solid var(--lime);transform:rotate(-45deg)}
+.ticks.soft li::before{border-color:var(--mute)}
+.who{color:var(--mute);margin:16px 0}
+.intro-text p{max-width:62ch;color:var(--mute)}
+
+/* layout + rail */
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:56px;padding-top:56px;align-items:start}
+.rail{position:sticky;top:calc(var(--nav-h) + 20px);max-height:calc(100vh - var(--nav-h) - 40px);overflow:auto;padding-right:8px}
+.rail-title{font:700 .95rem var(--f-display);margin:0 0 12px}
+.rail ol{list-style:none;margin:0 0 18px;padding:0}
+.rail a{display:flex;gap:10px;align-items:flex-start;text-decoration:none;color:var(--mute);padding:.6rem .7rem;min-height:44px;border-left:2px solid var(--line);font-size:.95rem;line-height:1.35;transition:color .2s,border-color .2s,background .2s}
+.rail a:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.rail a.active{color:var(--text);border-left-color:var(--lime);background:rgba(198,255,61,.06);font-weight:700}
+.tick{flex:none;width:12px;height:12px;margin-top:4px;border-radius:50%;background:rgba(255,255,255,.14);transition:background .3s,box-shadow .3s}
+.rail a.done .tick{background:var(--lime);box-shadow:0 0 10px var(--lime)}
+.rail .reset{width:100%}
+
+/* modules */
+.mod{padding:8px 0 72px;margin-bottom:64px;border-bottom:1px solid var(--line)}
+.mod-head{margin-bottom:28px}
+.mod-no{display:inline-block;margin:0 0 14px;font:600 .78rem/1 var(--f-mono);color:var(--lime);border:1px solid rgba(198,255,61,.4);padding:.45rem .8rem;border-radius:999px;letter-spacing:.08em}
+.mod h2{font:700 clamp(1.5rem,3vw,2.3rem)/1.15 var(--f-display);letter-spacing:-.015em;margin:0 0 14px;overflow-wrap:anywhere}
+.mod-sum{font-size:1.15rem;margin:0 0 6px;max-width:44em}
+.mod-meta{margin:0;color:var(--mute);font-size:.9rem}
+.prose{max-width:760px}
+.prose p,.prose li{max-width:68ch}
+.prose h3,.takeaways h3,.practice h3,.quiz h3,.ai-ask h3{font:700 1.05rem/1.3 var(--f-display);margin:2.4rem 0 .8rem}
+.prose ul,.prose ol{padding-left:1.4rem}
+.prose li{margin:.3rem 0}
+code{font-family:var(--f-mono);font-size:.86em}
+.prose code,.takeaways code,.practice code,.quiz code,.callout code,td code,.ai-prompt code{background:rgba(123,92,255,.18);color:#DCD3FF;padding:.12em .42em;border-radius:5px}
+.tbl{overflow-x:auto;margin:1.4rem 0;border:1px solid var(--line);border-radius:12px;max-width:100%;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{padding:.7rem 1rem;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--card2);font-weight:700}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:rgba(123,92,255,.07)}
+
+.callout{margin:1.6rem 0;padding:1rem 1.2rem 1rem 1.3rem;border:1px solid var(--line);border-left:4px solid var(--violet-l);background:var(--card);border-radius:4px 14px 14px 4px;max-width:68ch}
+.callout.k-tip{border-left-color:var(--lime)}
+.callout.k-warn{border-left-color:var(--red);background:linear-gradient(90deg,rgba(255,92,122,.08),var(--card))}
+.callout.k-why{border-left-color:var(--violet-l);background:linear-gradient(90deg,rgba(123,92,255,.12),var(--card))}
+.callout-title{font:700 .85rem/1.3 var(--f-display);margin-bottom:.5rem;display:flex;align-items:center;gap:.6rem}
+.callout .ico{width:9px;height:9px;transform:rotate(45deg);background:currentColor;display:inline-block;flex:none}
+.callout.k-tip .callout-title{color:var(--lime)}
+.callout.k-warn .callout-title{color:var(--red)}
+.callout.k-why .callout-title{color:var(--violet-l)}
+.callout p{margin:.3rem 0}
+
+/* code */
+.code{margin:1.6rem 0;background:var(--code-bg);border:1px solid var(--line);border-radius:14px;overflow:hidden;max-width:100%;box-shadow:0 18px 40px -24px rgba(123,92,255,.55)}
+.code figcaption{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:.25rem .5rem .25rem 1rem;background:rgba(255,255,255,.04);border-bottom:1px solid var(--line)}
+.fname{font:600 .8rem var(--f-mono);color:var(--mute)}
+.acts{display:flex;gap:8px}
+.code pre{margin:0;padding:1rem 1.2rem;overflow-x:auto;tab-size:4}
+.prose .code code,.practice .code code,.code code{background:none;padding:0;border-radius:0;font-size:.9rem;line-height:1.65;color:#E4E7F7;white-space:pre}
+.tk-k{color:#B39DFF}.tk-s{color:var(--lime)}.tk-n{color:var(--amber)}.tk-c{color:#7B84A6;font-style:italic}
+.tk-f{color:#7FD4FF}.tk-b{color:#E0A8FF}.tk-d{color:var(--amber)}
+.out{border-top:1px dashed var(--line2);background:#04050A;padding:.8rem 1.2rem}
+.out-cmd{font:500 .8rem var(--f-mono);color:var(--mute);margin-bottom:.4rem}
+.out-body{margin:0;font:500 .9rem/1.6 var(--f-mono);color:var(--lime);white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.out-body.typing::after{content:"";display:inline-block;width:.55em;height:1em;background:var(--lime);margin-left:2px;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+.code-note{padding:.7rem 1.2rem;border-top:1px solid var(--line);font-size:.93rem;color:var(--mute)}
+
+/* module extras */
+.takeaways,.practice,.quiz,.ai-ask{max-width:760px;margin:2.6rem 0;padding:1.5rem 1.7rem;border-radius:18px}
+.takeaways h3,.practice h3,.quiz h3,.ai-ask h3{margin-top:0}
+.takeaways{background:var(--card);border:1px solid var(--line)}
+.takeaways ul{list-style:none;margin:0;padding:0}
+.takeaways li{position:relative;padding:.35rem 0 .35rem 1.6rem}
+.takeaways li::before{content:"";position:absolute;left:0;top:.8rem;width:8px;height:8px;transform:rotate(45deg);background:var(--lime);box-shadow:0 0 8px rgba(198,255,61,.6)}
+.practice{border:1.5px dashed rgba(165,139,255,.7);background:rgba(123,92,255,.06)}
+.reveal-row{display:flex;flex-wrap:wrap;gap:18px;margin:1rem 0 .6rem}
+.reveal{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s cubic-bezier(.2,.9,.2,1)}
+.reveal>div{overflow:hidden;min-height:0}
+.reveal.open{grid-template-rows:1fr}
+.hint{margin:.8rem 0 0;padding:.8rem 1rem;background:var(--card);border-left:4px solid var(--violet-l);border-radius:2px 10px 10px 2px}
+.quiz{border:1px solid var(--line);background:var(--card)}
+.q{margin:0 0 1.6rem}
+.q-text{font-weight:700;margin:0 0 .7rem}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;font:500 1rem/1.4 var(--f-body);color:var(--text);background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:12px;padding:.8rem 1rem;min-height:48px;cursor:pointer;transition:transform .15s,border-color .2s,background .2s}
+.opt:hover:not(:disabled){transform:translateX(6px);border-color:var(--violet-l);background:rgba(123,92,255,.12)}
+.opt:disabled{cursor:default;color:var(--mute)}
+.opt.right{border-color:var(--lime);background:rgba(198,255,61,.1);color:var(--text)}
+.opt.wrong{border-color:var(--red);background:rgba(255,92,122,.1);color:var(--text);animation:shake .4s}
+@keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.why{margin:.7rem 0 0;padding:.6rem .9rem;border-left:4px solid var(--lime);background:rgba(198,255,61,.06);border-radius:2px 10px 10px 2px}
+.score{margin:0;font-weight:700;color:var(--lime)}
+.ai-ask{background:linear-gradient(135deg,rgba(123,92,255,.3),rgba(13,15,24,.92) 70%);border:1px solid rgba(165,139,255,.5)}
+.ai-prompt{font:500 .93rem/1.65 var(--f-mono);background:rgba(0,0,0,.45);border:1px solid var(--line);padding:.9rem 1rem;border-radius:12px;margin:0 0 1.2rem}
+.mod-foot{display:flex;flex-wrap:wrap;gap:20px;margin-top:2.4rem}
+
+/* bands */
+.band{background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:80px 0;margin-top:24px}
+.band h2,.cheat-wrap h2,.plan h2,.two-col h2,.road h2,.faq h2,.next h2{font:700 clamp(1.5rem,3.2vw,2.3rem)/1.15 var(--f-display);letter-spacing:-.015em;margin:0 0 12px;overflow-wrap:anywhere}
+.band-sub{color:var(--mute);margin:0 0 32px;max-width:52ch}
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:24px}
+.proj{background:var(--bg);border:1px solid var(--line);border-top:4px solid var(--lime);padding:1.5rem;border-radius:6px 22px 6px 22px;transition:transform .2s,box-shadow .2s}
+.proj:hover{transform:translateY(-4px);box-shadow:0 18px 40px -22px var(--violet)}
+.proj.d-medium{border-top-color:var(--violet-l)}.proj.d-hard{border-top-color:var(--red)}
+.proj-diff{margin:0;font:600 .75rem var(--f-mono);color:var(--mute);letter-spacing:.1em}
+.proj h3{font:700 1.05rem/1.3 var(--f-display);margin:.4rem 0 .7rem}
+.chips{list-style:none;display:flex;flex-wrap:wrap;gap:6px;padding:0;margin:1rem 0}
+.chips li{border:1px solid var(--line2);border-radius:999px;padding:.2rem .75rem;font:500 .78rem var(--f-mono);color:var(--mute)}
+details{border-top:1px solid var(--line);padding-top:.5rem}
+summary{cursor:pointer;font-weight:700;list-style:none;min-height:44px;display:flex;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+";display:inline-block;width:1.3em;color:var(--lime);font:700 1.1rem var(--f-mono)}
+details[open]>summary::before{content:"\2212"}
+details ol,details p{margin:.3rem 0 .8rem}
+.cheat-wrap{padding-top:80px;padding-bottom:24px}
+.cheat td:first-child{white-space:nowrap}
+.next{padding:88px 0 96px}
+.next p{color:var(--mute);margin:0 0 28px;max-width:52ch}
+.foot{border-top:1px solid var(--line);padding:32px 0;color:var(--mute)}
+.foot-in{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+.foot p{margin:0}
+.foot strong{color:var(--text);font-family:var(--f-display)}
+
+/* roadmap page */
+.road{padding-top:88px}
+.stages{position:relative;margin-top:40px;padding-left:48px}
+.stages::before{content:"";position:absolute;left:11px;top:10px;bottom:10px;border-left:2px dashed var(--line2)}
+.stage{position:relative;margin-bottom:40px;--c:var(--lime)}
+.stage.c-violet{--c:var(--violet-l)}.stage.c-paper{--c:var(--text)}
+.stage-node{position:absolute;left:-48px;top:30px;width:24px;height:24px;border-radius:50%;background:var(--bg);border:4px solid var(--c);box-shadow:0 0 14px var(--c)}
+.stage-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--c);padding:1.7rem 1.9rem;border-radius:4px 24px 24px 4px;transition:transform .2s,box-shadow .2s}
+.stage-card:hover{transform:translateY(-4px);box-shadow:0 22px 44px -26px var(--c)}
+.stage-card h3{font:700 clamp(1.15rem,2.4vw,1.6rem)/1.2 var(--f-display);margin:0 0 .6rem;overflow-wrap:anywhere}
+.stage-card .badge{display:inline-block;margin:0 0 14px;padding:.35rem .8rem;border:1px solid var(--c);border-radius:999px;color:var(--c);font:600 .75rem var(--f-mono);letter-spacing:.08em}
+.stage-meter{height:8px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-top:18px}
+.stage-meter span{display:block;height:100%;background:var(--c);box-shadow:0 0 12px var(--c);transition:width .8s cubic-bezier(.2,.9,.2,1)}
+.stage-prog{margin:.5rem 0 1.2rem;font:500 .85rem var(--f-mono);color:var(--mute)}
+.stage-cols{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:1.6rem}
+.stage-cols h4{margin:0 0 .5rem;font:700 .85rem var(--f-display)}
+.stage-cols ol,.stage-cols ul{margin:0 0 1rem;padding-left:1.2rem;font-size:.95rem}
+.stage-cols a{color:var(--text);text-decoration-color:var(--c);text-underline-offset:3px}
+.stage-cols a:hover{color:var(--c)}
+.finder-wrap{max-width:820px}
+.finder{background:var(--bg);border:1px solid var(--line2);border-radius:8px 28px 8px 28px;padding:2rem;min-height:240px;box-shadow:0 30px 60px -40px var(--violet)}
+.finder h3{font:700 1.2rem/1.35 var(--f-display);margin:0 0 1rem}
+.finder p{color:var(--mute)}
+.finder-step{margin:0 0 .6rem;color:var(--mute);font:600 .8rem var(--f-mono)}
+.finder-btns{display:flex;flex-wrap:wrap;gap:20px;margin-top:1.4rem}
+.finder-bar{height:6px;background:rgba(255,255,255,.1);border-radius:99px;margin-bottom:1.4rem;overflow:hidden}
+.finder-bar span{display:block;height:100%;background:linear-gradient(90deg,var(--violet),var(--lime));transition:width .4s}
+.plan,.two-col,.faq{padding-top:88px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.rules{list-style:none;margin:0;padding:0}
+.rules li{padding:.9rem 0;border-bottom:1px solid var(--line)}
+.rules strong{color:var(--lime)}
+.career-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.career{background:var(--bg);border:1px solid var(--line);padding:1.4rem;border-radius:22px 6px 22px 6px;transition:transform .2s,border-color .2s,box-shadow .2s}
+.career:hover{transform:translateY(-4px);border-color:var(--violet-l);box-shadow:0 18px 40px -24px var(--violet)}
+.career h3{font:700 1rem/1.3 var(--f-display);margin:0 0 .4rem}
+.career-tech{color:var(--lime);font:600 .82rem var(--f-mono);margin:0 0 .6rem}
+.career p{margin:0}
+.faq{padding-bottom:48px;max-width:860px}
+.faq details{padding:.4rem 0;border-top:1px solid var(--line)}
+.faq details:last-child{border-bottom:1px solid var(--line)}
+.faq summary{font-size:1.05rem}
+
+/* scroll reveal (added by JS only) */
+.js .fx{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.9,.2,1)}
+.js .fx.in{opacity:1;transform:none}
+.particle{position:fixed;z-index:300;pointer-events:none;font:700 18px var(--f-mono)}
+
+/* responsive */
+@media (max-width:980px){
+  .hero-grid,.intro-grid,.two-col,.stage-cols{grid-template-columns:minmax(0,1fr)}
+  .hero{min-height:0;padding:40px 0 56px}
+  .layout{grid-template-columns:minmax(0,1fr);gap:20px}
+  .rail{position:sticky;top:var(--nav-h);z-index:40;max-height:none;overflow:visible;background:rgba(6,7,11,.92);backdrop-filter:blur(10px);margin:0 -24px;padding:8px 24px;border-bottom:1px solid var(--line)}
+  .rail-title,.rail .reset{display:none}
+  .rail ol{display:flex;gap:8px;overflow-x:auto;margin:0;padding-bottom:6px;scrollbar-width:thin}
+  .rail a{white-space:nowrap;border-left:0;border:1px solid var(--line2);border-radius:999px;padding:.4rem .9rem}
+  .rail a.active{border-color:var(--lime)}
+}
+@media (max-width:760px){
+  body{padding-bottom:96px}
+  .side{left:50%;top:auto;bottom:calc(10px + env(safe-area-inset-bottom));transform:translateX(-50%);flex-direction:row;gap:6px;padding:8px;border-radius:24px}
+  .side a{width:46px;height:46px;transform:none}
+  .side a.active::before{left:50%;top:auto;bottom:-6px;width:16px;height:3px;margin:0 0 0 -8px}
+  .side a.hot{background:rgba(255,255,255,.05);color:var(--text);border-color:var(--line)}
+  .side a.key-logo.hot{background:var(--violet);color:#fff}
+  .tip{display:none}
+  :root{--nav-h:0px}
+  .nav{position:relative;flex-wrap:wrap;padding:6px 16px;gap:0 12px}
+  .nav-links{order:3;width:100%;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+  .nav-links a{white-space:nowrap;padding:0 .75rem}
+  .wrap{padding:0 16px}
+  .rail{margin:0 -16px;padding:8px 16px}
+  .stages{padding-left:36px}.stage-node{left:-36px}
+  .stages::before{left:6px}
+  .takeaways,.practice,.quiz,.ai-ask{padding:1.15rem}
+  .stage-card{padding:1.3rem}
+}
+@media (hover:none){.glow{display:none}}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .fx{opacity:1;transform:none}
+}
+
+
+.exam-glossary{margin:1.25rem 0 2rem;padding:1.1rem;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.025)}
+.exam-glossary h3{margin-top:.2rem!important}
+.exam-glossary dl{display:grid;grid-template-columns:minmax(150px,.8fr) minmax(0,2fr);gap:.65rem 1rem;margin:1rem 0 0}
+.exam-glossary dt{font-weight:750;color:var(--text)}
+.exam-glossary dd{margin:0;color:var(--mute)}
+@media(max-width:600px){.exam-glossary dl{grid-template-columns:1fr;gap:.2rem}.exam-glossary dd{margin-bottom:.65rem}}
+</style>
+
+<style>
+.exam-extension{max-width:1100px;margin:3rem auto 5rem;padding:clamp(1rem,3vw,2rem);border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,rgba(123,92,255,.09),rgba(13,15,24,.96) 35%)}
+.exam-extension .exam-intro{max-width:850px;color:var(--mute)}
+.exam-extension h2{font:700 clamp(1.5rem,3vw,2.2rem)/1.2 var(--f-display);margin:.2rem 0 1rem}
+.exam-extension h3{font:700 1.08rem/1.35 var(--f-display);margin:2rem 0 .7rem}
+.exam-extension h4{font:700 1rem/1.4 var(--f-body);margin:1.2rem 0 .5rem}
+.exam-extension .exam-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:1rem;margin:1rem 0}
+.exam-extension .exam-card{padding:1rem 1.1rem;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025)}
+.exam-extension .exam-card h3,.exam-extension .exam-card h4{margin-top:.2rem}
+.exam-extension pre{overflow:auto;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--code-bg);font: .9rem/1.65 var(--f-mono);color:#E4E7F7;white-space:pre}
+.exam-extension code{font-family:var(--f-mono)}
+.exam-extension .exam-note{padding:.9rem 1rem;border-left:3px solid var(--lime);background:rgba(198,255,61,.05);border-radius:0 10px 10px 0;margin:1rem 0}
+.exam-extension .exam-warn{border-left-color:var(--amber);background:rgba(255,184,107,.06)}
+.exam-extension table{width:100%;border-collapse:collapse;font-size:.95rem}
+.exam-extension th,.exam-extension td{padding:.7rem .8rem;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+.exam-extension th{background:var(--card2)}
+.exam-extension details{margin:.7rem 0;padding:.85rem 1rem;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02)}
+.exam-extension summary{cursor:pointer;font-weight:700}
+.exam-extension details p{margin:.7rem 0 .1rem}
+.exam-extension .exam-checklist{padding-left:1.3rem}
+.exam-extension .exam-checklist li{margin:.45rem 0}
+@media(max-width:760px){.exam-extension{margin:2rem 12px;padding:1rem}.exam-extension table{font-size:.86rem}}
+</style>
+
+</head>
+<body data-level="intermediate" data-page="level"><a class="skip" href="#main">Skip to content</a><header class="nav"><a class="logo" href="java-roadmap.html"><span class="hexmark"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5 20.5 7.5v9L12 21.5 3.5 16.5v-9z"/><path d="m13.5 9-3 3 3 3"/></svg></span><span class="wm">CipherCode<b>AI</b></span></a><nav class="nav-links" aria-label="Java course"><a href="java-roadmap.html">Roadmap</a><a href="java-beginner.html">Beginner</a><a href="java-intermediate.html" aria-current="page">Intermediate</a><a href="java-advanced.html">Advanced</a></nav></header><div class="read-bar"><span></span></div><div class="glow"></div><nav class="side" aria-label="Page sections"><a class="key-logo" href="java-roadmap.html" aria-label="Roadmap"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5 20.5 7.5v9L12 21.5 3.5 16.5v-9z"/><path d="m13.5 9-3 3 3 3"/></svg><span class="tip">Java course</span></a><a href="#top" data-sec="top" aria-label="Top"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/></svg><span class="tip" aria-hidden="true">Top</span></a><a href="#modules" data-sec="modules" aria-label="Modules"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></svg><span class="tip" aria-hidden="true">Modules</span></a><a href="#next" data-sec="next" aria-label="Next"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="tip" aria-hidden="true">Next</span></a></nav><section class="hero" id="top"><div class="wrap hero-grid"><div class="hero-copy"><p class="chip"><span class="dot"></span>CIPHERCODE.AI · JAVA INTERMEDIATE</p><h1 id="h1" aria-label="Java builds real programs"><span class="l1" data-decode="Java builds">Java builds</span> <span class="l2" data-decode="real programs">real programs</span></h1><p class="lede">OOP depth, streams, files and testing: the jump from scripts to projects.</p><ul class="stats"><li><strong>3</strong> modules</li><li>Line-by-line code</li><li>Quizzes + practice</li></ul></div><div class="hero-orb"><canvas id="orb" role="img" aria-label="Rotating sphere of code characters"></canvas><p class="wheel-msg" id="wheelMsg" aria-live="polite"></p><ul class="leds" id="leds"></ul><p class="wheel-cap" id="wheelCap"></p></div></div></section><main id="main"><div class="wrap layout" id="modules"><nav class="rail" aria-label="Modules"><p class="rail-title">Modules</p><ol><li><a href="#m-inheritance-interfaces" data-rail="inheritance-interfaces"><span class="tick"></span><span>Inheritance and interfaces</span></a></li><li><a href="#m-streams-lambdas" data-rail="streams-lambdas"><span class="tick"></span><span>Lambdas and Streams</span></a></li><li><a href="#m-files-testing" data-rail="files-testing"><span class="tick"></span><span>Files and JUnit</span></a></li></ol><button class="mini reset" type="button" data-reset>Reset progress</button></nav><div><section class="mod" id="m-inheritance-interfaces" data-mod="inheritance-interfaces"><header class="mod-head"><p class="mod-no">Module 1</p><h2>Inheritance, abstract classes and interfaces</h2><p class="mod-sum">Reuse code with extends, define contracts with interfaces, and use polymorphism.</p><p class="mod-meta">About 90 minutes</p></header><div class="prose"><p><strong>Inheritance</strong> lets a child class reuse a parent with <code>extends</code>. An <strong>interface</strong> is a contract: it lists methods a class promises to implement. <strong>Polymorphism</strong> means one reference type (the parent or interface) can hold many different objects, and Java calls the right method at runtime.</p><div class="tbl"><table><thead><tr><th>Tool</th><th>Use when</th><th>Key rule</th></tr></thead><tbody><tr><td><code>extends</code></td><td>"is-a" relationship (Dog is an Animal)</td><td>A class has only ONE parent</td></tr><tr><td><code>abstract class</code></td><td>Shared code plus some methods children must fill in</td><td>Cannot be created with <code>new</code></td></tr><tr><td><code>interface</code></td><td>A capability many unrelated classes share</td><td>A class can implement MANY</td></tr></tbody></table></div><figure class="code"><figcaption><span class="fname">Shapes.java</span><span class="acts"><button class="mini" type="button" data-act="copy">Copy</button><button class="mini run" type="button" data-act="run">Run</button></span></figcaption><pre><code>interface Shape { double area(); }
+
+class Circle implements Shape {
+    private double r;
+    Circle(double r) { this.r = r; }
+    @Override public double area() { return Math.PI * r * r; }
+}
+class Rect implements Shape {
+    private double w, h;
+    Rect(double w, double h) { this.w = w; this.h = h; }
+    @Override public double area() { return w * h; }
+}
+public class Shapes {
+    public static void main(String[] args) {
+        Shape[] list = { new Circle(1), new Rect(2, 3) };
+        for (Shape s : list) System.out.println(s.area());
+    }
+}</code></pre><div class="out" hidden data-out="3.141592653589793&#10;6.0"><div class="out-cmd">$ javac Shapes.java && java Shapes</div><pre class="out-body"></pre></div><div class="code-note">Line 1 is the contract. <code>implements Shape</code> forces Circle and Rect to supply <code>area()</code>. <code>@Override</code> makes the compiler check you really match the contract. The array type is <code>Shape</code>, yet each slot holds a different object; the JVM picks the right <code>area()</code> at runtime. That is polymorphism, and adding a Triangle later needs no change to the loop.</div></figure><aside class="callout k-why"><div class="callout-title"><span class="ico"></span>Program to the interface</div><div>Declare variables as <code>Shape</code> or <code>List</code>, not <code>Circle</code> or <code>ArrayList</code>. Your code then survives swapping the implementation.</div></aside><aside class="callout k-warn"><div class="callout-title"><span class="ico"></span>super and constructors</div><div>A child constructor must call the parent constructor first with <code>super(args)</code>. If the parent has no no-argument constructor, forgetting this is a compile error.</div></aside></div><div class="takeaways"><h3>Key takeaways</h3><ul><li>extends = reuse, single parent; implements = contract, many allowed</li><li>Abstract classes cannot be instantiated</li><li>@Override lets the compiler catch signature mistakes</li><li>Polymorphism: parent type reference, child behaviour</li></ul></div><div class="practice"><h3>Practice</h3><p>Add a <code>Square</code> that implements Shape and add it to the array.</p><div class="reveal-row"><button class="btn small ghost" type="button" data-reveal="hint"><span class="btn-label" data-t="Show hint">Show hint</span></button><button class="btn small ghost" type="button" data-reveal="solution"><span class="btn-label" data-t="Show solution">Show solution</span></button></div><div class="reveal" data-panel="hint"><div><p class="hint">Square needs one field, the side, and area is side * side.</p></div></div><div class="reveal" data-panel="solution"><div><figure class="code"><figcaption><span class="fname">Square.java</span><span class="acts"><button class="mini" type="button" data-act="copy">Copy</button></span></figcaption><pre><code>class Square implements Shape {
+    private double s;
+    Square(double s) { this.s = s; }
+    @Override public double area() { return s * s; }
+}</code></pre><div class="code-note"></div></figure></div></div></div><div class="quiz"><h3>Quick quiz</h3><div class="q" data-answer="1"><p class="q-text">Why can an abstract class not be created with new?</p><div class="opts"><button class="opt" type="button" data-i="0">It has no name</button><button class="opt" type="button" data-i="1">It may have unfinished methods</button><button class="opt" type="button" data-i="2">It is private</button><button class="opt" type="button" data-i="3">It has no fields</button></div><p class="why" hidden>Abstract methods have no body, so the object would be incomplete.</p></div><p class="score"></p></div><div class="mod-foot"><button class="btn small" type="button" data-done><span class="btn-label" data-t="Mark module complete">Mark module complete</span></button></div></section><section class="mod" id="m-streams-lambdas" data-mod="streams-lambdas"><header class="mod-head"><p class="mod-no">Module 2</p><h2>Lambdas and Streams</h2><p class="mod-sum">Write short functions inline and process collections as pipelines.</p><p class="mod-meta">About 75 minutes</p></header><div class="prose"><p>A <strong>lambda</strong> is an anonymous function written <code>(x) -&gt; x * 2</code>. A <strong>stream</strong> turns a collection into a pipeline: source, then intermediate steps (<code>filter</code>, <code>map</code>, <code>sorted</code>), then one terminal step (<code>collect</code>, <code>count</code>, <code>forEach</code>). Nothing runs until the terminal step.</p><figure class="code"><figcaption><span class="fname">Pipeline.java</span><span class="acts"><button class="mini" type="button" data-act="copy">Copy</button><button class="mini run" type="button" data-act="run">Run</button></span></figcaption><pre><code>import java.util.*;
+import java.util.stream.*;
+
+public class Pipeline {
+    public static void main(String[] args) {
+        List&lt;Integer&gt; nums = List.of(1, 2, 3, 4, 5, 6);
+        List&lt;Integer&gt; out = nums.stream()
+            .filter(n -&gt; n % 2 == 0)
+            .map(n -&gt; n * n)
+            .collect(Collectors.toList());
+        System.out.println(out);
+        System.out.println(nums.stream().mapToInt(n -&gt; n).sum());
+    }
+}</code></pre><div class="out" hidden data-out="[4, 16, 36]&#10;21"><div class="out-cmd">$ javac Pipeline.java && java Pipeline</div><pre class="out-body"></pre></div><div class="code-note"><code>stream()</code> opens the pipeline. <code>filter(n -&gt; n % 2 == 0)</code> keeps evens: 2,4,6. <code>map(n -&gt; n * n)</code> squares each: 4,16,36. <code>collect</code> ends the pipeline into a new list; the original list is unchanged. <code>mapToInt(...).sum()</code> adds all numbers.</div></figure><aside class="callout k-tip"><div class="callout-title"><span class="ico"></span>Readable beats clever</div><div>If a lambda grows past one or two lines, move it into a named method and use a method reference like <code>String::toUpperCase</code>.</div></aside><aside class="callout k-warn"><div class="callout-title"><span class="ico"></span>Streams are single-use</div><div>Reusing a stream after its terminal operation throws <code>IllegalStateException</code>. Create a new one with <code>stream()</code>.</div></aside></div><div class="takeaways"><h3>Key takeaways</h3><ul><li>Lambda syntax: <code>(params) -&gt; expression</code></li><li>filter keeps, map transforms, collect gathers</li><li>Lazy: nothing runs without a terminal operation</li><li>Streams do not modify the source</li></ul></div><div class="practice"><h3>Practice</h3><p>From a list of names, print those longer than 3 letters in upper case.</p><div class="reveal-row"><button class="btn small ghost" type="button" data-reveal="hint"><span class="btn-label" data-t="Show hint">Show hint</span></button><button class="btn small ghost" type="button" data-reveal="solution"><span class="btn-label" data-t="Show solution">Show solution</span></button></div><div class="reveal" data-panel="hint"><div><p class="hint">Chain filter(s -&gt; s.length() &gt; 3), map(String::toUpperCase), forEach(System.out::println).</p></div></div><div class="reveal" data-panel="solution"><div><figure class="code"><figcaption><span class="fname">Names.java</span><span class="acts"><button class="mini" type="button" data-act="copy">Copy</button></span></figcaption><pre><code>names.stream()
+     .filter(s -&gt; s.length() &gt; 3)
+     .map(String::toUpperCase)
+     .forEach(System.out::println);</code></pre><div class="code-note"></div></figure></div></div></div><div class="quiz"><h3>Quick quiz</h3><div class="q" data-answer="2"><p class="q-text">Which is a terminal operation?</p><div class="opts"><button class="opt" type="button" data-i="0">filter</button><button class="opt" type="button" data-i="1">map</button><button class="opt" type="button" data-i="2">collect</button><button class="opt" type="button" data-i="3">sorted</button></div><p class="why" hidden><code>collect</code> produces the final result and triggers the pipeline.</p></div><p class="score"></p></div><div class="mod-foot"><button class="btn small" type="button" data-done><span class="btn-label" data-t="Mark module complete">Mark module complete</span></button></div></section><section class="mod" id="m-files-testing" data-mod="files-testing"><header class="mod-head"><p class="mod-no">Module 3</p><h2>Files and JUnit testing</h2><p class="mod-sum">Read and write files safely and prove your code works with automated tests.</p><p class="mod-meta">About 75 minutes</p></header><div class="prose"><p>Files can fail (missing, locked), so Java forces you to handle <code>IOException</code>. <strong>try-with-resources</strong> closes the file for you even when an error occurs. A <strong>unit test</strong> checks one small method automatically; JUnit 5 is the standard tool.</p><figure class="code"><figcaption><span class="fname">Notes.java</span><span class="acts"><button class="mini" type="button" data-act="copy">Copy</button><button class="mini run" type="button" data-act="run">Run</button></span></figcaption><pre><code>import java.nio.file.*;
+import java.util.List;
+import java.io.IOException;
+
+public class Notes {
+    public static void main(String[] args) throws IOException {
+        Path p = Path.of(&quot;notes.txt&quot;);
+        Files.writeString(p, &quot;learn java\nbuild app\n&quot;);
+        List&lt;String&gt; lines = Files.readAllLines(p);
+        System.out.println(lines.size() + &quot; lines, first: &quot; + lines.get(0));
+    }
+}</code></pre><div class="out" hidden data-out="2 lines, first: learn java"><div class="out-cmd">$ java Notes</div><pre class="out-body"></pre></div><div class="code-note"><code>Path.of</code> names the file. <code>writeString</code> creates or overwrites it. <code>readAllLines</code> returns each line as a list item. <code>throws IOException</code> passes the possible failure up instead of catching it here.</div></figure><figure class="code"><figcaption><span class="fname">CalcTest.java</span><span class="acts"><button class="mini" type="button" data-act="copy">Copy</button></span></figcaption><pre><code>import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class CalcTest {
+    @Test
+    void addsTwoNumbers() {
+        assertEquals(5, 2 + 3);
+    }
+}</code></pre><div class="code-note"><code>@Test</code> marks a test method. <code>assertEquals(expected, actual)</code> fails the test when they differ. Run with <code>mvn test</code>. Name tests by behaviour and test one idea each.</div></figure><aside class="callout k-why"><div class="callout-title"><span class="ico"></span>Why test</div><div>Tests let you change code later without fear. If a test goes red, you know exactly which behaviour broke.</div></aside></div><div class="takeaways"><h3>Key takeaways</h3><ul><li>Use Path and Files for modern file I/O</li><li>Handle or declare IOException</li><li>try-with-resources auto-closes resources</li><li>JUnit: @Test + assertEquals, one idea per test</li></ul></div><div class="practice"><h3>Practice</h3><p>Write a test that checks <code>"java".toUpperCase()</code> equals JAVA.</p><div class="reveal-row"><button class="btn small ghost" type="button" data-reveal="hint"><span class="btn-label" data-t="Show hint">Show hint</span></button><button class="btn small ghost" type="button" data-reveal="solution"><span class="btn-label" data-t="Show solution">Show solution</span></button></div><div class="reveal" data-panel="hint"><div><p class="hint">Use assertEquals("JAVA", "java".toUpperCase()).</p></div></div><div class="reveal" data-panel="solution"><div><figure class="code"><figcaption><span class="fname">UpperTest.java</span><span class="acts"><button class="mini" type="button" data-act="copy">Copy</button></span></figcaption><pre><code>@Test
+void upper() {
+    assertEquals(&quot;JAVA&quot;, &quot;java&quot;.toUpperCase());
+}</code></pre><div class="code-note"></div></figure></div></div></div><div class="quiz"><h3>Quick quiz</h3><div class="q" data-answer="1"><p class="q-text">What does try-with-resources guarantee?</p><div class="opts"><button class="opt" type="button" data-i="0">Faster code</button><button class="opt" type="button" data-i="1">Resource is closed automatically</button><button class="opt" type="button" data-i="2">No exceptions</button><button class="opt" type="button" data-i="3">File is created</button></div><p class="why" hidden>The resource is closed even if an exception is thrown.</p></div><p class="score"></p></div><div class="mod-foot"><button class="btn small" type="button" data-done><span class="btn-label" data-t="Mark module complete">Mark module complete</span></button></div></section></div></div>
+<section class="exam-extension" id="exam-prep" aria-labelledby="exam-prep-title">
+  <p class="mod-no">EXAM READINESS EXTENSION · INTERMEDIATE</p>
+  <h2 id="exam-prep-title">Core Java topics often missing from short courses</h2>
+  <p class="exam-intro">Use this material alongside inheritance, streams, files and testing. These are high-value topics in college papers, placement tests and Core Java interviews: contracts of common object methods, generics, collection choice, complexity, exceptions, JDBC and language features.</p>
+  <section class="exam-glossary" id="definition-glossary" aria-labelledby="definition-glossary-title">
+    <h3 id="definition-glossary-title">Definition bank: Intermediate Java definitions</h3>
+    <p>Learn these concise definitions for theory questions. In written exams, define the term first, then add a short example when asked.</p>
+    <dl><dt>Inheritance</dt><dd>An object-oriented feature in which a class extends another class and inherits accessible members.</dd><dt>Superclass and subclass</dt><dd>The superclass is the class being extended; the subclass is the class that extends it.</dd><dt>Polymorphism</dt><dd>The ability to use a common parent type or interface while different implementations provide different behavior.</dd><dt>Method overriding</dt><dd>A subclass provides its own implementation of an inherited instance method with a compatible signature.</dd><dt>Method overloading</dt><dd>A class declares multiple methods with the same name but different parameter lists.</dd><dt>Abstract class</dt><dd>A class that cannot be instantiated directly and can contain both abstract and implemented methods.</dd><dt>Interface</dt><dd>A reference type that defines a contract a class can implement; interfaces can also contain certain default and static methods.</dd><dt>Generic type</dt><dd>A class, interface or method parameterized by types, such as List&lt;String&gt;, to improve type safety.</dd><dt>Wildcard</dt><dd>The ? symbol in a generic type argument, used when the exact type argument is unknown or bounded.</dd><dt>Lambda expression</dt><dd>A concise way to provide an implementation of a functional interface, often written with -&gt;.</dd><dt>Functional interface</dt><dd>An interface with one abstract method, suitable as the target type for a lambda expression.</dd><dt>Stream API</dt><dd>A pipeline API for processing sequences of data through operations such as filter, map and collect.</dd><dt>Intermediate and terminal stream operations</dt><dd>Intermediate operations build a pipeline and are generally lazy; a terminal operation triggers processing and produces a result or side effect.</dd><dt>List, Set and Map</dt><dd>List preserves positional order and allows duplicates; Set models unique elements; Map associates keys with values.</dd><dt>equals() and hashCode()</dt><dd>equals defines logical equality; hashCode supplies a hash value and must be consistent for objects considered equal.</dd><dt>Comparable and Comparator</dt><dd>Comparable defines a type’s natural ordering; Comparator defines an ordering separately, often for sorting in different ways.</dd><dt>Immutable object</dt><dd>An object whose observable state cannot be changed after construction.</dd><dt>Checked exception</dt><dd>An exception type that Java requires code to catch or declare, except for unchecked exception categories.</dd><dt>Try-with-resources</dt><dd>A try statement that automatically closes declared resources implementing AutoCloseable.</dd><dt>JDBC</dt><dd>Java Database Connectivity, the standard Java API for connecting to databases and executing SQL.</dd><dt>PreparedStatement</dt><dd>A JDBC object for parameterized SQL; it helps separate SQL structure from values and reduces SQL injection risk.</dd><dt>Transaction</dt><dd>A group of database operations treated as one unit that can be committed or rolled back.</dd><dt>Unit test</dt><dd>A test that checks a small unit of behavior, usually a method or class, in isolation as far as practical.</dd><dt>JUnit</dt><dd>A widely used Java testing framework for writing and running automated tests.</dd><dt>Big-O notation</dt><dd>A way to describe an upper-bound growth rate for resource use as input size increases, ignoring constant factors.</dd></dl>
+  </section>
+
+  <div class="exam-grid">
+    <article class="exam-card"><h3>1. Generics and type safety</h3><p>Generics parameterize types so the compiler can catch incompatible values. Prefer <code>List<String></code> over a raw <code>List</code>. Generic type arguments cannot be primitive types; use wrappers such as <code>Integer</code>.</p><pre>List<String> names = new ArrayList<>();
+names.add("Mira");
+String first = names.get(0);
+// names.add(42); // compile-time error</pre><p>Know generic classes, generic methods, bounded type parameters such as <code>&lt;T extends Number&gt;</code>, and wildcards. <code>? extends T</code> is useful for reading values as T; <code>? super T</code> is useful when adding T values (PECS: Producer Extends, Consumer Super).</p></article>
+    <article class="exam-card"><h3>2. Collection choice and complexity</h3><p><code>List</code> preserves order and permits duplicates; <code>Set</code> models uniqueness; <code>Map</code> associates keys with values. <code>ArrayList</code> is strong for indexed reads, <code>LinkedList</code> supports deque operations, <code>HashSet</code>/<code>HashMap</code> usually offer average constant-time basic operations, and <code>TreeSet</code>/<code>TreeMap</code> keep sorted order.</p><div style="overflow-x:auto"><table><thead><tr><th>Structure</th><th>Typical use</th><th>Typical cost</th></tr></thead><tbody><tr><td>ArrayList</td><td>Indexed access, append</td><td>get O(1); append amortized O(1); middle insert O(n)</td></tr><tr><td>HashMap / HashSet</td><td>Lookup by key / uniqueness</td><td>Average O(1), subject to hashing and implementation</td></tr><tr><td>TreeMap / TreeSet</td><td>Sorted keys / values</td><td>O(log n) basic operations</td></tr><tr><td>ArrayDeque</td><td>Queue or stack operations</td><td>Amortized O(1) at ends</td></tr></tbody></table></div></article>
+    <article class="exam-card"><h3>3. equals() and hashCode()</h3><p>When overriding <code>equals</code>, also override <code>hashCode</code>. Equal objects must have equal hash codes; unequal objects may share a hash. Hash-based collections use these methods to find logical matches.</p><pre>final class User {
+    private final int id;
+    User(int id) { this.id = id; }
+    @Override public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        return id == ((User) o).id;
+    }
+    @Override public int hashCode() {
+        return Integer.hashCode(id);
+    }
+}</pre><p>For newer Java versions, pattern matching may simplify type checks, but use syntax supported by your exam's target version.</p></article>
+    <article class="exam-card"><h3>4. Comparable vs Comparator</h3><p><code>Comparable</code> defines a type's natural ordering with <code>compareTo</code>. <code>Comparator</code> defines an external or alternate ordering. Comparators are useful for sorting by different fields.</p><pre>List<String> names = new ArrayList<>(
+    List.of("Zoe", "Ana", "Mira"));
+names.sort(Comparator.naturalOrder());
+names.sort(Comparator.comparingInt(String::length));</pre><p>Comparison should be consistent and avoid subtraction-based comparators that can overflow. Use <code>Integer.compare(a, b)</code> for integer comparison.</p></article>
+    <article class="exam-card"><h3>5. Exceptions, immutability and resources</h3><p>Checked exceptions must be caught or declared; unchecked exceptions derive from <code>RuntimeException</code>. Do not swallow exceptions silently. Custom exceptions should communicate a meaningful failure. Immutable objects are easier to reason about and safer to share.</p><pre>try (BufferedReader reader = Files.newBufferedReader(path)) {
+    String line = reader.readLine();
+    System.out.println(line);
+} catch (IOException e) {
+    System.err.println("Could not read file: " + e.getMessage());
+}</pre><p>Try-with-resources closes <code>AutoCloseable</code> resources. <code>finally</code> is for cleanup that must happen whether or not an exception occurs, though resources are usually better managed with try-with-resources.</p></article>
+    <article class="exam-card"><h3>6. JDBC essentials</h3><p>JDBC connects Java code to relational databases. Know <code>Connection</code>, <code>PreparedStatement</code>, <code>ResultSet</code>, transactions and SQL exceptions. Use placeholders instead of concatenating untrusted input into SQL.</p><pre>String sql = "SELECT name FROM student WHERE id = ?";
+try (Connection c = dataSource.getConnection();
+     PreparedStatement ps = c.prepareStatement(sql)) {
+    ps.setInt(1, studentId);
+    try (ResultSet rs = ps.executeQuery()) {
+        if (rs.next()) System.out.println(rs.getString("name"));
+    }
+}</pre><p>Driver configuration and <code>DataSource</code> setup depend on the environment. For transactions, understand <code>commit</code>, <code>rollback</code> and auto-commit.</p></article>
+  </div>
+  <h3>More language and API points to revise</h3>
+  <ul class="exam-checklist"><li><strong>Generics:</strong> type erasure, bounded types, wildcards, generic methods and why <code>List&lt;Integer&gt;</code> is not a subtype of <code>List&lt;Number&gt;</code>.</li><li><strong>Collections:</strong> iterator removal, fail-fast behaviour, immutable vs unmodifiable collections, null-handling differences and when ordering matters.</li><li><strong>Functional Java:</strong> functional interfaces, method references, lazy stream intermediate operations, terminal operations, collectors, grouping and reduction.</li><li><strong>Concurrency foundation:</strong> thread states, race conditions, intrinsic locks, <code>volatile</code>, executors, futures and why compound operations such as <code>count++</code> are not atomic.</li><li><strong>Object design:</strong> composition vs inheritance, Liskov substitution principle, cohesion, coupling, interfaces and dependency injection.</li><li><strong>Testing:</strong> assertions, arrange-act-assert, edge cases, test isolation, parameterized tests, mocks vs fakes, and why unit tests should not depend on execution order.</li><li><strong>Build and packages:</strong> classpath/module path basics, Maven or Gradle dependency declarations, access modifiers and annotations.</li></ul>
+  <h3>Exam-style questions with worked answers</h3>
+  <details><summary>Q1. Why should equals() and hashCode() be overridden together?</summary><p><strong>Answer:</strong> Hash-based collections first use the hash code to select a bucket and then use equality to identify a matching key. If equal objects have different hash codes, lookups can fail to find logically equal keys.</p></details>
+  <details><summary>Q2. What is printed?</summary><pre>List<Integer> values = new ArrayList<>(List.of(1, 2, 3, 4));
+int count = values.stream().filter(n -> n % 2 == 0).count();
+System.out.println(count);</pre><p><strong>Answer:</strong> <code>2</code>. The filter keeps 2 and 4; <code>count()</code> is a terminal operation that evaluates the stream.</p></details>
+  <details><summary>Q3. Explain checked and unchecked exceptions.</summary><p><strong>Answer:</strong> Checked exceptions are checked by the compiler and must be caught or declared, for example <code>IOException</code>. Unchecked exceptions, including <code>NullPointerException</code> and <code>IllegalArgumentException</code>, do not have that compile-time handling requirement.</p></details>
+  <details><summary>Q4. When choose HashMap instead of TreeMap?</summary><p><strong>Answer:</strong> Choose <code>HashMap</code> when sorted iteration is not needed and average fast key lookup is desired. Choose <code>TreeMap</code> when keys must remain sorted or range/navigation operations are useful.</p></details>
+  <details><summary>Q5. How do you prevent SQL injection in a lookup?</summary><p><strong>Answer:</strong> Use a <code>PreparedStatement</code> with placeholders and bind values using setter methods. Do not concatenate untrusted input into SQL text.</p></details>
+  <h3>Programming practice set</h3>
+  <ol class="exam-checklist"><li>Count word frequencies using a <code>Map</code>, ignoring case and punctuation.</li><li>Sort employees by department, then salary descending, then name.</li><li>Implement an immutable <code>Money</code> or <code>Student</code> class with validation and correct equality.</li><li>Group a list of transactions by category using streams and calculate totals.</li><li>Write a method that reads a UTF-8 text file safely and reports useful errors.</li><li>Design a repository method using JDBC and a transaction; explain rollback behaviour.</li></ol>
+  <aside class="exam-note exam-warn"><strong>Version note:</strong> Java APIs and syntax change over time. Confirm the Java release and library restrictions in your exam. For theory questions, define the concept, state its contract, show a short example, then mention one limitation or common mistake.</aside>
+</section>
+
+<section class="next" id="next"><div class="wrap"><h2>Next up</h2><p>Keep going when you are ready.</p><a class="btn" href="java-advanced.html"><span class="btn-label" data-t="Continue">Continue</span></a></div></section></main><footer class="foot"><div class="wrap foot-in"><p><strong>CipherCodeAI</strong> Java course</p><p>Type every example yourself.</p></div></footer><script>window.CC = {"page": "intermediate", "modules": [], "message": "OOP MASTERED", "shiftScale": 1, "totals": {"beginner": ["setup-first-program", "variables-types-input", "conditions-loops", "methods-arrays", "classes-objects", "collections-exceptions"], "intermediate": ["inheritance-interfaces", "streams-lambdas", "files-testing"], "advanced": ["concurrency", "jvm-memory-gc", "spring-boot-rest"]}, "files": {"roadmap": "java-roadmap.html", "beginner": "java-beginner.html", "intermediate": "java-intermediate.html", "advanced": "java-advanced.html"}};</script>
+<script>
+(function () {
+  'use strict';
+  var CC = window.CC || {};
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var KEY = 'cc-java-progress-v1';
+  var GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789{}[]()<>=+-*/%&|^~#@$_';
+  var ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  var VIOLET = [123, 92, 255], LIME = [198, 255, 61];
+
+  /* ---------- progress state (safe if storage is blocked) ---------- */
+  var memory = {};
+  function load() {
+    try { var v = JSON.parse(localStorage.getItem(KEY)); if (v && typeof v === 'object') return v; } catch (e) {}
+    return memory;
+  }
+  function save(s) { memory = s; try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+  var state = load();
+  function doneList(level) { return (state[level] || []).filter(function (id) { return (CC.totals[level] || []).indexOf(id) > -1; }); }
+
+  /* ---------- scramble text ---------- */
+  function scramble(el, finalText, dur) {
+    if (reduce || !finalText) { el.textContent = finalText; return; }
+    var token = (el._st = (el._st || 0) + 1);
+    var start = performance.now(), len = finalText.length;
+    (function tick(now) {
+      if (el._st !== token) return;
+      var p = Math.min(1, (now - start) / dur), res = Math.floor(p * len), out = '';
+      for (var i = 0; i < len; i++) {
+        var ch = finalText.charAt(i);
+        out += (i < res || ch === ' ') ? ch : GLYPHS.charAt(Math.floor(Math.random() * GLYPHS.length));
+      }
+      el.textContent = out;
+      if (p < 1) requestAnimationFrame(tick); else el.textContent = finalText;
+    })(start);
+  }
+
+  /* headline: scrambles into place on load and again on hover */
+  var h1 = $('#h1');
+  function decodeHeadline() {
+    var t = 0;
+    $$('[data-decode]', h1).forEach(function (s) {
+      var txt = s.getAttribute('data-decode');
+      setTimeout(function () { scramble(s, txt, 800); }, t);
+      t += 260;
+    });
+  }
+  if (h1) {
+    decodeHeadline();
+    var hTimer = 0;
+    h1.addEventListener('mouseenter', function () {
+      var now = Date.now(); if (now - hTimer < 1400) return; hTimer = now; decodeHeadline();
+    });
+  }
+
+  /* button labels scramble on hover / focus */
+  function bindBtn(b) {
+    var l = $('.btn-label', b);
+    if (!l) return;
+    function go() {
+      if (reduce) return;
+      if (!l.style.minWidth) l.style.minWidth = l.offsetWidth + 'px';
+      scramble(l, l.getAttribute('data-t') || l.textContent, 380);
+    }
+    b.addEventListener('mouseenter', go);
+    b.addEventListener('focus', go);
+  }
+  $$('.btn').forEach(bindBtn);
+  function setLabel(btn, text) {
+    var l = $('.btn-label', btn);
+    if (!l) { btn.textContent = text; return; }
+    l.setAttribute('data-t', text); l.style.minWidth = ''; l.textContent = text;
+  }
+
+  /* ---------- reading bar + cursor glow ---------- */
+  var bar = $('.read-bar span');
+  function onScroll() {
+    var h = document.documentElement, max = h.scrollHeight - h.clientHeight;
+    if (bar) bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  var glow = $('.glow'), mouse = { x: 0, y: 0, nx: 0, ny: 0 };
+  window.addEventListener('pointermove', function (e) {
+    mouse.nx = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.ny = (e.clientY / window.innerHeight) * 2 - 1;
+    if (glow && !reduce) { glow.style.setProperty('--gx', e.clientX + 'px'); glow.style.setProperty('--gy', e.clientY + 'px'); }
+  }, { passive: true });
+
+  /* ---------- sections fade up on scroll ---------- */
+  if (!reduce && 'IntersectionObserver' in window) {
+    var fxSel = ['.mod-head', '.takeaways', '.practice', '.quiz', '.ai-ask', '.proj', '.career', '.stage', '.band .wrap > h2', '.next .wrap',
+      '.cheat-wrap', '.plan', '.two-col', '.faq', '.intro-grid > div', '.finder-wrap'];
+    var fxIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var t = e.target; fxIo.unobserve(t); t.classList.add('in');
+        setTimeout(function () { t.classList.remove('fx', 'in'); }, 900);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    $$(fxSel.join(',')).forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.9 && r.bottom > 0) return; /* already in view */
+      el.classList.add('fx'); fxIo.observe(el);
+    });
+  }
+
+  /* ---------- magnet side nav ---------- */
+  var side = $('.side');
+  if (side) {
+    var links = $$('a', side), desktop = matchMedia('(min-width: 761px)');
+    var clear = function () {
+      links.forEach(function (a) { a.style.removeProperty('--s'); a.style.removeProperty('--x'); a.classList.remove('hot'); });
+    };
+    if (!reduce) {
+      side.addEventListener('pointermove', function (e) {
+        if (!desktop.matches || e.pointerType === 'touch') return;
+        var y = e.clientY, best = null, bd = 1e9;
+        links.forEach(function (a) {
+          var r = a.getBoundingClientRect(), d = Math.abs(y - (r.top + r.height / 2));
+          a._d = d; if (d < bd) { bd = d; best = a; }
+        });
+        links.forEach(function (a) {
+          var f = Math.max(0, 1 - a._d / 96); f = f * f;
+          a.style.setProperty('--s', (1 + 0.8 * f).toFixed(3));
+          a.style.setProperty('--x', (12 * f).toFixed(1) + 'px');
+          a.classList.toggle('hot', a === best);
+        });
+      });
+      side.addEventListener('pointerleave', clear);
+      desktop.addEventListener && desktop.addEventListener('change', clear);
+    }
+    links.forEach(function (a) {
+      a.addEventListener('focus', function () { a.classList.add('hot'); });
+      a.addEventListener('blur', function () { a.classList.remove('hot'); });
+    });
+    /* active section */
+    var secs = [];
+    links.forEach(function (a) {
+      var id = a.getAttribute('data-sec'); if (!id) return;
+      var s = document.getElementById(id); if (s) secs.push({ a: a, s: s });
+    });
+    if (secs.length && 'IntersectionObserver' in window) {
+      var sio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          secs.forEach(function (x) { x.a.classList.toggle('active', x.s === e.target); });
+        });
+      }, { rootMargin: '-45% 0px -50% 0px' });
+      secs.forEach(function (x) { sio.observe(x.s); });
+      secs[0].a.classList.add('active');
+    }
+  }
+
+  /* ---------- python syntax highlighting ---------- */
+  var KW = 'False None True and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield match case'.split(' ');
+  var BI = 'print len range int float str bool list dict set tuple input type sum min max sorted reversed enumerate zip open abs round isinstance map filter any all super object self cls iter next id dir help repr format divmod pow bytes frozenset slice vars getattr setattr hasattr callable'.split(' ');
+  var RX = /(\/\/[^\n]*)|("""[\s\S]*?"""|'''[\s\S]*?''')|((?:[rRbBfFuU]{1,2})?"(?:\\.|[^"\\\n])*"|(?:[rRbBfFuU]{1,2})?'(?:\\.|[^'\\\n])*')|(\b\d[\d_]*\.?\d*(?:[eE][+-]?\d+)?\b)|(@[A-Za-z_][\w.]*)|([A-Za-z_]\w*)/g;
+  function escH(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function highlight(code) {
+    var out = '', last = 0, m, prev = '';
+    RX.lastIndex = 0;
+    while ((m = RX.exec(code))) {
+      out += escH(code.slice(last, m.index));
+      var t = m[0], cls = '';
+      if (m[1]) cls = 'c';
+      else if (m[2] || m[3]) cls = 's';
+      else if (m[4]) cls = 'n';
+      else if (m[5]) cls = 'd';
+      else if (m[6]) {
+        if (KW.indexOf(t) > -1) cls = 'k';
+        else if (prev === 'def' || prev === 'class') cls = 'f';
+        else if (BI.indexOf(t) > -1) cls = 'b';
+        else if (code.charAt(m.index + t.length) === '(') cls = 'f';
+        prev = t;
+      }
+      out += cls ? '<span class="tk-' + cls + '">' + escH(t) + '</span>' : escH(t);
+      last = m.index + t.length;
+      if (!m[6]) prev = '';
+    }
+    return out + escH(code.slice(last));
+  }
+  $$('.code pre code').forEach(function (c) {
+    var raw = c.textContent;
+    c.parentNode.parentNode.setAttribute('data-raw', raw);
+    c.innerHTML = highlight(raw);
+  });
+
+  /* ---------- copy ---------- */
+  function copyText(text, done) {
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta); done();
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+    else fallback();
+  }
+
+  /* ---------- code actions ---------- */
+  $$('.code').forEach(function (fig) {
+    $$('[data-act]', fig).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var act = b.getAttribute('data-act');
+        if (act === 'copy') {
+          copyText(fig.getAttribute('data-raw') || '', function () {
+            var old = b.textContent; b.textContent = 'Copied'; setTimeout(function () { b.textContent = old; }, 1400);
+          });
+        } else if (act === 'run') {
+          var out = $('.out', fig), body = $('.out-body', out);
+          var text = out.getAttribute('data-out') || '';
+          out.hidden = false; body.textContent = ''; b.textContent = 'Run again';
+          out._run = (out._run || 0) + 1; var id = out._run;
+          if (reduce) { body.textContent = text; return; }
+          body.className = 'out-body typing';
+          var i = 0, step = Math.max(1, Math.ceil(text.length / 160));
+          (function typeIt() {
+            if (out._run !== id) return;
+            i = Math.min(text.length, i + step);
+            body.textContent = text.slice(0, i);
+            if (i < text.length) setTimeout(typeIt, 14); else body.className = 'out-body';
+          })();
+        }
+      });
+    });
+  });
+
+  /* ---------- reveal (hint / solution) ---------- */
+  $$('[data-reveal]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var kind = b.getAttribute('data-reveal');
+      var panel = $('[data-panel="' + kind + '"]', b.closest('.practice'));
+      var open = panel.classList.toggle('open');
+      setLabel(b, (open ? 'Hide ' : 'Show ') + kind);
+    });
+  });
+  $$('[data-copy-prompt]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var txt = $('.ai-prompt', b.parentNode).textContent;
+      copyText(txt, function () { setLabel(b, 'Copied'); setTimeout(function () { setLabel(b, 'Copy prompt'); }, 1500); });
+    });
+  });
+
+  /* ---------- quizzes ---------- */
+  $$('.quiz').forEach(function (qz) {
+    var qs = $$('.q', qz), answered = 0, right = 0, score = $('.score', qz);
+    qs.forEach(function (q) {
+      var ans = parseInt(q.getAttribute('data-answer'), 10);
+      $$('.opt', q).forEach(function (o) {
+        o.addEventListener('click', function () {
+          var i = parseInt(o.getAttribute('data-i'), 10);
+          $$('.opt', q).forEach(function (x) { x.disabled = true; });
+          if (i === ans) { o.classList.add('right'); right++; }
+          else { o.classList.add('wrong'); $$('.opt', q)[ans].classList.add('right'); }
+          $('.why', q).hidden = false; answered++;
+          if (answered === qs.length) score.textContent = 'You got ' + right + ' of ' + qs.length + ' right.' + (right === qs.length ? ' Clean sweep.' : ' Re-read the explanations above, then try the practice again.');
+        });
+      });
+    });
+  });
+
+  /* ---------- particles ---------- */
+  function burst(elm) {
+    if (reduce) return;
+    var r = elm.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    var chars = '01{}[]#<>/=+;';
+    for (var i = 0; i < 18; i++) {
+      var s = document.createElement('span');
+      s.className = 'particle'; s.textContent = chars.charAt(Math.floor(Math.random() * chars.length));
+      s.style.left = cx + 'px'; s.style.top = cy + 'px';
+      s.style.color = i % 3 === 0 ? '#7B5CFF' : (i % 3 === 1 ? '#C6FF3D' : '#F3F4FA');
+      document.body.appendChild(s);
+      var a = (Math.PI * 2 * i) / 18, d = 70 + Math.random() * 80;
+      var an = s.animate([{ transform: 'translate(0,0) scale(1)', opacity: 1 },
+        { transform: 'translate(' + Math.cos(a) * d + 'px,' + (Math.sin(a) * d - 30) + 'px) scale(.4) rotate(' + (Math.random() * 360) + 'deg)', opacity: 0 }],
+        { duration: 800 + Math.random() * 400, easing: 'cubic-bezier(.2,.9,.2,1)' });
+      an.onfinish = (function (n) { return function () { n.remove(); }; })(s);
+    }
+  }
+
+  /* ---------- hero: code-character sphere + cipher ring ---------- */
+  function mix(t) {
+    return 'rgb(' + Math.round(VIOLET[0] + (LIME[0] - VIOLET[0]) * t) + ',' + Math.round(VIOLET[1] + (LIME[1] - VIOLET[1]) * t) + ',' + Math.round(VIOLET[2] + (LIME[2] - VIOLET[2]) * t) + ')';
+  }
+  function initOrb() {
+    var cv = $('#orb'); if (!cv || !cv.getContext) return;
+    var ctx = cv.getContext('2d'), W = 0, H = 0, R = 0, dpr = 1;
+    var CH = '01{}<>/;=+*#$&'.split('');
+    var N = 640, pts = [], i;
+    for (i = 0; i < N; i++) {
+      var y = 1 - (i + 0.5) * 2 / N, r = Math.sqrt(1 - y * y), th = i * 2.399963229728653;
+      pts.push({ x: Math.cos(th) * r, y: y, z: Math.sin(th) * r, c: CH[(Math.random() * CH.length) | 0], t: Math.random() * 2500, f: 1 });
+    }
+    var word = 'CIPHERCODEAI', ring = [];
+    for (i = 0; i < 36; i++) ring.push({ ch: word.charAt(i % 12), a: i * Math.PI * 2 / 36 });
+    var rotY = 0, tiltX = 0, tiltY = 0, ringA = 0, running = false, visible = true, raf = 0;
+    function size() {
+      var b = cv.getBoundingClientRect(); dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = b.width; H = b.height; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); R = Math.min(W, H) * 0.3;
+    }
+    function frame(now) {
+      ctx.clearRect(0, 0, W, H);
+      var cx = W / 2, cy = H / 2, items = [];
+      var ay = rotY + tiltY, ax = tiltX;
+      var cyy = Math.cos(ay), syy = Math.sin(ay), cxx = Math.cos(ax), sxx = Math.sin(ax);
+      var k;
+      for (k = 0; k < N; k++) {
+        var p = pts[k];
+        if (!reduce && now > p.t) { p.c = CH[(Math.random() * CH.length) | 0]; p.t = now + 300 + Math.random() * 2600; p.f = Math.random() < 0.18 ? 0.25 : 1; }
+        var x1 = p.x * cyy + p.z * syy, z1 = -p.x * syy + p.z * cyy;
+        var y2 = p.y * cxx - z1 * sxx, z2 = p.y * sxx + z1 * cxx;
+        items.push({ z: z2, x: x1, y: y2, ch: p.c, f: p.f, ring: false });
+      }
+      /* ring: tilted circle that spins on its own axis (not the sphere's) */
+      var pitch = 0.95 + tiltX * 0.3, roll = -0.34 + tiltY * 0.2, cp = Math.cos(pitch), sp = Math.sin(pitch), cr = Math.cos(roll), sr = Math.sin(roll);
+      for (k = 0; k < ring.length; k++) {
+        var a = ring[k].a + ringA, x0 = Math.cos(a) * 1.42, z0 = Math.sin(a) * 1.42;
+        var y1 = -z0 * sp, z1 = z0 * cp;
+        items.push({ z: z1, x: x0 * cr - y1 * sr, y: x0 * sr + y1 * cr, ch: ring[k].ch, f: 1, ring: true });
+      }
+      items.sort(function (u, v) { return u.z - v.z; });
+      for (k = 0; k < items.length; k++) {
+        var it = items[k], persp = 3 / (3 - it.z * 0.9), t = Math.max(0, Math.min(1, (it.z + 1.2) / 2.4));
+        var sx = cx + it.x * R * persp, sy = cy + it.y * R * persp;
+        if (it.ring) {
+          ctx.font = '700 ' + (17 * persp * R / 150).toFixed(1) + 'px "JetBrains Mono",monospace';
+          ctx.fillStyle = 'rgba(243,244,250,' + (0.35 + 0.65 * t).toFixed(2) + ')';
+        } else {
+          ctx.font = '600 ' + ((8 + 6 * t) * persp * R / 150).toFixed(1) + 'px "JetBrains Mono",monospace';
+          ctx.fillStyle = mix(t); ctx.globalAlpha = (0.18 + 0.82 * t) * it.f;
+        }
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(it.ch, sx, sy);
+        ctx.globalAlpha = 1;
+      }
+    }
+    function loop(now) {
+      if (!running) return;
+      rotY += 0.0045; ringA += 0.012;
+      tiltX += (mouse.ny * 0.55 - tiltX) * 0.05; tiltY += (mouse.nx * 0.7 - tiltY) * 0.05;
+      frame(now); raf = requestAnimationFrame(loop);
+    }
+    function start() { if (running || reduce || !visible || document.hidden) return; running = true; raf = requestAnimationFrame(loop); }
+    function stop() { running = false; cancelAnimationFrame(raf); }
+    size(); window.addEventListener('resize', function () { size(); if (!running) frame(performance.now()); });
+    var draw0 = function () { rotY = 0.6; frame(performance.now()); };
+    if (document.fonts && document.fonts.load) { document.fonts.load('600 12px "JetBrains Mono"').then(draw0, draw0); } else { draw0(); }
+    if (!reduce) {
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (es) { visible = es[0].isIntersecting; if (visible) start(); else stop(); }).observe(cv);
+      }
+      document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
+      start();
+    }
+  }
+  initOrb();
+
+  /* ---------- cipher message tied to progress ---------- */
+  var msgEl = $('#wheelMsg'), capEl = $('#wheelCap'), ledsEl = $('#leds'), lastMsg = null, ledBuilt = 0;
+  function caesar(text, shift) {
+    return text.replace(/[A-Z]/g, function (c) { return ALPHA.charAt((ALPHA.indexOf(c) + shift) % 26); });
+  }
+  function paintOrb() {
+    if (!msgEl) return;
+    var page = CC.page, total, done;
+    if (page === 'roadmap') {
+      total = CC.totals.beginner.length + CC.totals.intermediate.length + CC.totals.advanced.length;
+      done = doneList('beginner').length + doneList('intermediate').length + doneList('advanced').length;
+    } else { total = CC.totals[page].length; done = doneList(page).length; }
+    var remaining = total - done;
+    var shift = page === 'roadmap' ? Math.ceil((remaining / total) * 25) : Math.min(25, remaining);
+    if (remaining === 0) shift = 0;
+    if (ledsEl) {
+      if (ledBuilt !== total) {
+        ledsEl.innerHTML = ''; for (var i = 0; i < total; i++) { var li = document.createElement('li'); li.className = 'led'; ledsEl.appendChild(li); }
+        ledBuilt = total;
+      }
+      $$('.led', ledsEl).forEach(function (l, i) { l.classList.toggle('on', i < done); });
+    }
+    var msg = caesar(CC.message, shift);
+    if (msg !== lastMsg) { lastMsg = msg; scramble(msgEl, msg, 700); }
+    if (capEl) capEl.textContent = (shift === 0 ? 'Cipher cracked. Every module is done.' : 'Cipher shift +' + shift + '. Finish modules to decode the message.') + ' ' + done + ' of ' + total + ' modules done.';
+  }
+
+  /* ---------- level page: done buttons, rail ---------- */
+  function paintLevel() {
+    if (CC.page === 'roadmap') return;
+    var done = doneList(CC.page);
+    $$('[data-done]').forEach(function (b) {
+      var id = b.closest('.mod').getAttribute('data-mod'), isDone = done.indexOf(id) > -1;
+      b.classList.toggle('is-done', isDone);
+      setLabel(b, isDone ? 'Completed. Click to undo' : 'Mark module complete');
+    });
+    $$('[data-rail]').forEach(function (a) { a.classList.toggle('done', done.indexOf(a.getAttribute('data-rail')) > -1); });
+  }
+  $$('[data-done]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var id = b.closest('.mod').getAttribute('data-mod'), lvl = CC.page;
+      var list = (state[lvl] || []).slice(), i = list.indexOf(id);
+      if (i > -1) list.splice(i, 1); else { list.push(id); burst(b); }
+      state[lvl] = list; save(state); paintLevel(); paintOrb();
+    });
+  });
+  var resetBtn = $('[data-reset]'), resetTimer;
+  if (resetBtn) resetBtn.addEventListener('click', function () {
+    if (!resetBtn._armed) {
+      resetBtn._armed = true; setLabel(resetBtn, 'Click again to reset');
+      resetTimer = setTimeout(function () { resetBtn._armed = false; setLabel(resetBtn, 'Reset progress'); }, 3000);
+      return;
+    }
+    clearTimeout(resetTimer); resetBtn._armed = false; setLabel(resetBtn, 'Reset progress');
+    state[CC.page] = []; save(state); paintLevel(); paintOrb();
+  });
+
+  /* active module in rail */
+  var mods = $$('.mod');
+  if (mods.length && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        $$('[data-rail]').forEach(function (a) { a.classList.toggle('active', a.getAttribute('data-rail') === e.target.getAttribute('data-mod')); });
+        var act = $('[data-rail].active');
+        if (act && act.scrollIntoView && window.innerWidth <= 980) act.scrollIntoView({ block: 'nearest', inline: 'center' });
+      });
+    }, { rootMargin: '-25% 0px -65% 0px' });
+    mods.forEach(function (m) { io.observe(m); });
+  }
+
+  /* ---------- roadmap page: stage meters + level finder ---------- */
+  function paintStages() {
+    $$('[data-stage]').forEach(function (s) {
+      var k = s.getAttribute('data-stage'), n = CC.totals[k].length, d = doneList(k).length;
+      $('.stage-meter span', s).style.width = Math.round((d / n) * 100) + '%';
+      $('[data-prog]', s).textContent = d + ' of ' + n + ' modules done';
+    });
+  }
+  var fb = $('#finderBox');
+  if (fb) {
+    var QS = [
+      'Have you written your own Python function that takes inputs and returns a value?',
+      'Have you built a class with __init__ and used inheritance or properties?',
+      'Can you explain what a generator and a decorator do, and write one?',
+      'Have you used threads, multiprocessing or asyncio in a real project?'
+    ];
+    var RES = [
+      ['Start with Beginner', 'Begin at module 1. You will go from installing Python to writing programs that read files and handle errors.', 'beginner'],
+      ['Start with Intermediate', 'You know the basics. Intermediate teaches classes, the standard library, files, APIs and testing, which turns scripts into projects.', 'intermediate'],
+      ['Start with Advanced, then fill gaps', 'You are close. Skim Intermediate modules 1 to 4 for gaps, then work through Advanced from the top.', 'advanced'],
+      ['Jump to the Advanced capstone', 'You already work at a high level. Use Advanced as a checklist, focus on typing, performance and packaging, and ship the capstone.', 'advanced']
+    ];
+    var step = 0;
+    var mkBtn = function (t, fn, kind) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'btn ' + kind;
+      b.innerHTML = '<span class="btn-label"></span>'; var l = $('.btn-label', b); l.textContent = t; l.setAttribute('data-t', t);
+      b.addEventListener('click', fn); bindBtn(b);
+      return b;
+    };
+    var show = function (i) {
+      var r = RES[i]; fb.innerHTML = '';
+      var h = document.createElement('h3'); h.textContent = r[0];
+      var p = document.createElement('p'); p.textContent = r[1];
+      var row = document.createElement('div'); row.className = 'finder-btns';
+      var go = document.createElement('a'); go.className = 'btn'; go.href = CC.files[r[2]];
+      go.innerHTML = '<span class="btn-label"></span>'; var gl = $('.btn-label', go);
+      gl.textContent = 'Open ' + r[2].charAt(0).toUpperCase() + r[2].slice(1); gl.setAttribute('data-t', gl.textContent); bindBtn(go);
+      row.appendChild(go);
+      row.appendChild(mkBtn('Start over', function () { step = 0; render(); }, 'ghost'));
+      fb.appendChild(h); fb.appendChild(p); fb.appendChild(row);
+      burst(go);
+    };
+    var render = function () {
+      fb.innerHTML = '';
+      if (step >= QS.length) { show(3); return; }
+      var barEl = document.createElement('div'); barEl.className = 'finder-bar'; barEl.innerHTML = '<span style="width:' + (step / QS.length * 100) + '%"></span>';
+      var p = document.createElement('p'); p.className = 'finder-step'; p.textContent = 'Question ' + (step + 1) + ' of ' + QS.length;
+      var h = document.createElement('h3'); h.textContent = QS[step];
+      var row = document.createElement('div'); row.className = 'finder-btns';
+      row.appendChild(mkBtn('Yes', function () { step++; render(); }, ''));
+      row.appendChild(mkBtn('Not yet', function () { show(step); }, 'ghost'));
+      fb.appendChild(barEl); fb.appendChild(p); fb.appendChild(h); fb.appendChild(row);
+    };
+    render();
+  }
+
+  paintLevel(); paintOrb(); paintStages();
+})();
+
+</script></body></html>

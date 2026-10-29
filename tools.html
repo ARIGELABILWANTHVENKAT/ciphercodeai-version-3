@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>CipherCodeAI: Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&family=Space+Grotesk:wght@500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#06070B;--tx:#F3F4FA;--mu:#9AA0B8;--card:#0D0F18;--bd:rgba(255,255,255,.10);--vi:#7B5CFF;--li:#C6FF3D;--lid:#7f9f1f;--red:#FF5C6C;--bar:rgba(13,15,24,.85);--field:rgba(255,255,255,.05);--disp:'Unbounded',system-ui,sans-serif;--sans:'Space Grotesk',system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font:500 16px/1.6 var(--sans);overflow-x:hidden;background-image:radial-gradient(60% 40% at 50% 0%,rgba(123,92,255,.18),transparent 70%);background-repeat:no-repeat}
+:focus-visible{outline:2px solid var(--li);outline-offset:3px}
+main{padding-left:92px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+#pg{position:fixed;z-index:200;top:0;left:0;height:3px;width:100%;transform:scaleX(0);transform-origin:left;background:linear-gradient(90deg,var(--vi),var(--li))}
+.cg{position:fixed;z-index:0;top:0;left:0;width:600px;height:600px;margin:-300px 0 0 -300px;border-radius:50%;background:radial-gradient(circle,rgba(123,92,255,.2),transparent 65%);pointer-events:none;transition:transform .25s ease-out}
+
+/* key buttons */
+.key{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:46px;padding:0 22px;border-radius:14px;border:0;font:700 13px var(--disp);text-decoration:none;cursor:pointer;color:#06070B;background:var(--li);box-shadow:0 5px 0 var(--lid);transition:transform .12s,box-shadow .12s}
+.key:hover{transform:translateY(3px);box-shadow:0 2px 0 var(--lid)}
+.key:active{transform:translateY(5px);box-shadow:0 0 0 var(--lid)}
+.key.ghost{background:rgba(255,255,255,.04);color:var(--tx);border:1px solid var(--bd);box-shadow:0 5px 0 rgba(255,255,255,.12)}
+.key.ghost:hover{box-shadow:0 2px 0 rgba(255,255,255,.12)}
+.key svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+
+/* side nav */
+.snav{position:fixed;z-index:100;left:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;padding:10px;background:var(--bar);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--bd);border-radius:26px}
+.k{--s:1;--x:0px;position:relative;width:48px;height:48px;display:grid;place-items:center;border-radius:50%;color:var(--tx);background:rgba(255,255,255,.05);border:1px solid var(--bd);transform-origin:left center;transform:translateX(var(--x)) scale(var(--s));transition:transform .4s cubic-bezier(.2,1.3,.3,1),background .2s,color .2s}
+.k.live{transition:transform .06s linear,background .2s,color .2s}
+.k svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.k.logo{background:var(--vi);border-color:transparent}
+.k.hot{background:var(--li);color:#06070B;border-color:transparent}
+.lb{position:absolute;left:calc(100% + 12px);top:50%;transform:translateY(-50%) scale(calc(1 / var(--s)));transform-origin:left center;padding:6px 12px;border-radius:99px;background:#000;border:1px solid var(--bd);font:400 12px var(--mono);color:var(--tx);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s}
+.k.hot .lb,.k:focus-visible .lb{opacity:1}
+.k.active::before{content:'';position:absolute;left:-10px;top:50%;width:3px;height:18px;margin-top:-9px;border-radius:3px;background:var(--li);box-shadow:0 0 10px var(--li)}
+
+/* hero */
+.hero{position:relative;z-index:1;padding:100px 0 30px}
+.chip{display:inline-flex;align-items:center;gap:10px;padding:8px 14px;border:1px solid var(--bd);border-radius:99px;background:rgba(255,255,255,.04);font:500 11.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mu)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--li);box-shadow:0 0 10px var(--li);animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.25}}
+h1{margin:22px 0 18px;font:700 clamp(2.4rem,6vw,4.8rem)/1.04 var(--disp);letter-spacing:-.04em}
+h1 span{display:block;min-height:1.05em}
+h1 .l2{color:var(--li)}
+.lead{color:var(--mu);max-width:50ch;font-size:18px}
+
+/* cards */
+.grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:22px;padding:34px 0 110px}
+.card{position:relative;display:flex;flex-direction:column;gap:14px;background:var(--card);border:1px solid var(--bd);border-radius:24px;padding:22px;overflow:hidden;min-width:0;transform:perspective(1000px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .25s ease-out,border-color .3s}
+.card.w2{grid-column:span 2}
+.card::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(300px circle at var(--mx,50%) var(--my,0%),rgba(123,92,255,.28),transparent 70%);opacity:0;transition:opacity .3s}
+.card:hover::before{opacity:1}
+.card:focus-within{--rx:0deg!important;--ry:0deg!important;border-color:rgba(198,255,61,.4)}
+.card>*{position:relative}
+.ch{display:flex;align-items:center;gap:12px}
+.ci{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:rgba(123,92,255,.16);border:1px solid rgba(123,92,255,.4);color:var(--li);flex:none}
+.ci svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.ch h2{font:700 16px/1.25 var(--disp);letter-spacing:-.02em;flex:1}
+.led{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.14);transition:.3s;flex:none}
+.led.on{background:var(--li);box-shadow:0 0 12px var(--li)}
+.hint{color:var(--mu);font-size:15px;margin-top:-6px}
+.f,textarea{width:100%;padding:13px 14px;border-radius:12px;background:var(--field);border:1px solid var(--bd);color:var(--tx);font:400 14px var(--mono);resize:vertical}
+textarea{min-height:100px}
+.f:focus,textarea:focus{outline:none;border-color:var(--li);box-shadow:0 0 0 3px rgba(198,255,61,.14)}
+.f::placeholder,textarea::placeholder{color:#6b7190}
+.row{display:flex;gap:10px}.row>*{flex:1}.row[hidden]{display:none}
+.out{font:400 13.5px/1.55 var(--mono);padding:13px 14px;border-radius:12px;border:1px dashed var(--bd);min-height:48px;word-break:break-all;color:var(--mu)}
+.out.ok{color:var(--li);border-color:rgba(198,255,61,.35)}
+.meter{height:10px;border-radius:9px;background:var(--field);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--vi),var(--li));transition:width .3s}
+input[type=range]{width:100%;accent-color:var(--li)}
+.chk{display:flex;align-items:center;gap:10px;color:var(--mu);font-size:15px}
+.chk input{accent-color:var(--li);width:18px;height:18px}
+.gen{display:flex;gap:10px}
+#gen-output{flex:1;font:500 15px var(--mono);padding:13px;border-radius:12px;background:var(--field);border:1px dashed var(--bd);color:var(--li);text-align:center;word-break:break-all;display:flex;align-items:center;justify-content:center;min-height:50px}
+.sp{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:center}
+.dial{width:100%;max-width:380px;margin:0 auto}
+.dial svg{width:100%;display:block;overflow:visible}
+.trk{fill:none;stroke:rgba(255,255,255,.09);stroke-width:12;stroke-linecap:round}
+.arc{fill:none;stroke:url(#sg);stroke-width:12;stroke-linecap:round;stroke-dasharray:518.4;stroke-dashoffset:518.4;transition:stroke-dashoffset .5s cubic-bezier(.2,1.1,.3,1);filter:drop-shadow(0 0 8px rgba(123,92,255,.6))}
+.tick{stroke:rgba(255,255,255,.35);stroke-width:1.5}.tick.m{stroke:var(--tx);stroke-width:2.5}
+.tl{fill:var(--mu);font:400 10px var(--mono);text-anchor:middle;dominant-baseline:middle}
+.needle{transform-box:view-box;transform-origin:150px 150px;transform:rotate(-135deg);transition:transform .5s cubic-bezier(.2,1.25,.3,1);filter:drop-shadow(0 0 6px var(--li))}
+.rd{fill:var(--tx);font:700 34px var(--disp);text-anchor:middle;letter-spacing:-.03em}
+.ru{fill:var(--mu);font:400 12px var(--mono);text-anchor:middle}
+.rp{fill:var(--li);font:500 11px var(--mono);text-anchor:middle;letter-spacing:.08em;text-transform:uppercase}
+.side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.prov{padding:14px 16px;border:1px solid var(--bd);border-left:3px solid var(--li);border-radius:16px;background:var(--field)}
+.prov span{display:block;font:400 12px var(--mono);color:var(--mu)}
+.prov strong{display:block;font:700 18px/1.3 var(--disp);letter-spacing:-.02em;margin:4px 0 2px;word-break:break-word}
+.prov small{color:var(--mu);font-size:14px}
+.res{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.res>div{background:var(--field);border:1px solid var(--bd);border-radius:16px;padding:14px}
+.res span{display:block;font:400 12px var(--mono);color:var(--mu)}
+.res b{font:700 24px var(--disp);letter-spacing:-.03em}
+.res small{color:var(--mu);margin-left:4px;font:400 12px var(--mono)}
+@media(max-width:959px){.sp{grid-template-columns:1fr}}
+.qr{display:none;justify-content:center;background:#fff;border-radius:14px;padding:12px}
+.qr img,.qr canvas{width:128px!important;height:128px!important}
+.spacer{flex:1}
+
+footer{position:relative;z-index:1;border-top:1px solid var(--bd);padding:30px 0;color:var(--mu);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center}
+.wm{font:700 16px var(--disp);letter-spacing:-.03em;color:var(--tx);text-decoration:none}
+.wm b{color:var(--li)}
+
+@media(max-width:959px){.grid{grid-template-columns:1fr}.card.w2{grid-column:auto}}
+@media(max-width:759px){
+  main{padding-left:0;padding-bottom:96px}
+  .snav{left:50%;top:auto;bottom:calc(10px + env(safe-area-inset-bottom));transform:translateX(-50%);flex-direction:row;gap:6px;padding:8px 10px;border-radius:24px}
+  .k{width:44px;height:44px;transform:none;border:0;background:transparent}
+  .k.logo{background:var(--vi)}
+  .lb{display:none}
+  .k.active::before{left:50%;top:auto;bottom:1px;width:16px;height:3px;margin:0 0 0 -8px}
+  .hero{padding-top:64px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="hex" viewBox="0 0 32 32"><path d="M16 2l12 7v14l-12 7L4 23V9z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M12 12l5 4-5 4M18 21h3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol></svg>
+<div id="pg"></div><div class="cg" id="cg"></div>
+
+<nav class="snav" id="snav" aria-label="Site">
+  <a class="k logo" href="index.html" aria-label="CipherCodeAI home"><svg><use href="#hex"/></svg><span class="lb">CipherCodeAI</span></a>
+  <a class="k" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg><span class="lb">Home</span></a>
+  <a class="k active" href="#top" aria-label="Tools" aria-current="page"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 005 5L21 12.6 11.6 22a2.1 2.1 0 01-3-3L18 9.6"/><path d="M14.7 6.3L17 4l3 3"/></svg><span class="lb">Tools</span></a>
+  <a class="k" href="workspace.html" aria-label="Workspace"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"/></svg><span class="lb">Workspace</span></a>
+  <a class="k" href="index.html" id="logout" aria-label="Log out"><svg viewBox="0 0 24 24"><path d="M9 4H6a2 2 0 00-2 2v12a2 2 0 002 2h3M16 8l4 4-4 4M20 12H9"/></svg><span class="lb">Log out</span></a>
+</nav>
+
+<main>
+  <header class="hero" id="top">
+    <div class="wrap">
+      <span class="chip"><i class="dot"></i>CipherCode.AI · Tools run in your browser</span>
+      <h1 id="h1" aria-label="Small tools. Sharp results."><span class="l1" aria-hidden="true">Small tools.</span><span class="l2" aria-hidden="true">Sharp results.</span></h1>
+      <p class="lead">Check a password, hash a string, test your connection or read a log. Passwords, hashes and logs never leave your browser.</p>
+    </div>
+  </header>
+
+  <div class="wrap"><div class="grid">
+    <article class="card w2 rv" id="c-strength">
+      <div class="ch"><span class="ci"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><h2>Password strength</h2><i class="led"></i></div>
+      <p class="hint">See how well a password holds up as you type.</p>
+      <input class="f" id="tool-password" type="text" placeholder="Type a password" aria-label="Password to check" autocomplete="off">
+      <div class="meter"><i id="strength-fill"></i></div>
+      <p class="out" id="strength-feedback" aria-live="polite">Start typing to see a rating.</p>
+    </article>
+
+    <article class="card rv" id="c-hash">
+      <div class="ch"><span class="ci"><svg viewBox="0 0 24 24"><path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/></svg></span><h2>SHA-256 hash</h2><i class="led"></i></div>
+      <p class="hint">Turn any text into its fingerprint.</p>
+      <input class="f" id="hash-input" type="text" placeholder="Enter text" aria-label="Text to hash">
+      <button class="key" id="hash-btn" type="button">Generate hash</button>
+      <p class="out" id="hash-output" aria-live="polite">The hash will appear here.</p>
+    </article>
+
+    <article class="card rv" id="c-gen">
+      <div class="ch"><span class="ci"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l3 3"/></svg></span><h2>Password generator</h2><i class="led"></i></div>
+      <div><label for="gen-length" class="chk">Length <b id="gen-length-label" style="color:var(--li)">16</b></label><input id="gen-length" type="range" min="8" max="32" value="16"></div>
+      <label class="chk"><input id="gen-symbols" type="checkbox" checked> Include symbols</label>
+      <div class="gen"><div id="gen-output" aria-live="polite">Press generate</div><button class="key ghost" id="gen-copy" type="button">Copy</button></div>
+      <button class="key" id="gen-btn" type="button">Generate password</button>
+    </article>
+
+    <article class="card w2 rv" id="c-speed">
+      <div class="ch"><span class="ci"><svg viewBox="0 0 24 24"><path d="M4 17a8 8 0 1116 0"/><path d="M12 17l4-5"/></svg></span><h2>Connection speed</h2><i class="led"></i></div>
+      <p class="hint">Measures download and upload against Cloudflare’s network. It takes about 30 seconds.</p>
+      <div class="sp">
+        <div class="dial">
+          <svg viewBox="0 0 300 250" role="img" aria-label="Speedometer showing your current speed in megabits per second">
+            <defs><linearGradient id="sg" gradientUnits="userSpaceOnUse" x1="60" y1="230" x2="240" y2="230"><stop offset="0" stop-color="#7B5CFF"/><stop offset="1" stop-color="#C6FF3D"/></linearGradient></defs>
+            <path class="trk" d="M72.2 227.8A110 110 0 1 1 227.8 227.8"/>
+            <path class="arc" id="arc" d="M72.2 227.8A110 110 0 1 1 227.8 227.8"/>
+            <g id="ticks"></g>
+            <g class="needle" id="needle"><line x1="150" y1="164" x2="150" y2="60" stroke="#C6FF3D" stroke-width="3.5" stroke-linecap="round"/><circle cx="150" cy="150" r="10" fill="#0D0F18" stroke="#C6FF3D" stroke-width="3"/></g>
+            <text class="rd" id="rd" x="150" y="204">0</text>
+            <text class="ru" x="150" y="222">Mbps</text>
+            <text class="rp" id="rp" x="150" y="243">Ready</text>
+          </svg>
+        </div>
+        <div class="side">
+          <div class="prov"><span>Provider</span><strong id="isp-name">Not detected yet</strong><small id="isp-loc">Detected when you start the test.</small></div>
+          <div class="res">
+            <div><span>Download</span><b id="download-speed">0</b><small>Mbps</small></div>
+            <div><span>Upload</span><b id="upload-speed">0</b><small>Mbps</small></div>
+          </div>
+          <p class="out" id="isp" aria-live="polite">Press start to begin.</p>
+          <div class="row"><button class="key" id="speed-btn" type="button">Start speed test</button></div>
+          <div class="row" id="speed-actions" hidden><button class="key ghost" id="copy-result" type="button">Copy result</button><button class="key ghost" id="share-result" type="button">Share</button></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="card rv" id="c-ip">
+      <div class="ch"><span class="ci"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span><h2>IP lookup</h2><i class="led"></i></div>
+      <p class="hint">Find the public address you browse from.</p>
+      <span class="spacer"></span>
+      <button class="key" id="ip-btn" type="button">Show my IP</button>
+      <p class="out" id="ip-output" aria-live="polite">Your IP will appear here.</p>
+    </article>
+
+    <article class="card w2 rv" id="c-b64">
+      <div class="ch"><span class="ci"><svg viewBox="0 0 24 24"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg></span><h2>Base64 encode and decode</h2><i class="led"></i></div>
+      <textarea id="base64-input" placeholder="Paste text or Base64" aria-label="Text or Base64"></textarea>
+      <div class="row"><button class="key" id="b64-encode" type="button">Encode</button><button class="key ghost" id="b64-decode" type="button">Decode</button></div>
+      <p class="out" id="base64-output" aria-live="polite">The result will appear here.</p>
+    </article>
+
+    <article class="card rv" id="c-qr">
+      <div class="ch"><span class="ci"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h3v3M20 14v.01M14 20h.01M17 20h3v-3"/></svg></span><h2>QR code maker</h2><i class="led"></i></div>
+      <input class="f" id="qr-input" type="text" placeholder="Enter a link or text" aria-label="Link or text for QR code">
+      <button class="key" id="qr-btn" type="button">Make QR code</button>
+      <div id="qr-preview" class="qr"></div>
+      <button class="key ghost" id="qr-download" type="button" style="display:none">Download PNG</button>
+    </article>
+
+    <article class="card w2 rv" id="c-log">
+      <div class="ch"><span class="ci"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 10l3 2-3 2M12 15h5"/></svg></span><h2>Log analyzer</h2><i class="led"></i></div>
+      <p class="hint">Counts info, warning and error lines in pasted logs.</p>
+      <textarea id="log-input" placeholder="Paste log lines here" aria-label="Log text"></textarea>
+      <button class="key" id="log-btn" type="button">Analyze logs</button>
+      <p class="out" id="log-output" aria-live="polite">The summary will appear here.</p>
+    </article>
+  </div></div>
+</main>
+
+<footer><div class="wrap" style="padding-left:calc(24px + 0px)">
+  <a class="wm" href="index.html">CipherCode<b>AI</b></a>
+  <span>© 2026 CipherCodeAI · ciphercodeai.in · <a href="privacy.html" style="color:var(--li)">Privacy Policy</a></span>
+</div></footer>
+
+<script>
+const $=id=>document.getElementById(id), reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, canHover=matchMedia('(hover:hover)').matches;
+const led=(c,on=true)=>document.querySelector('#c-'+c+' .led').classList.toggle('on',on);
+const say=(el,t,ok)=>{el.textContent=t;el.classList.toggle('ok',!!ok)};
+
+/* progress, glow, reveal */
+const pg=$('pg');
+addEventListener('scroll',()=>{const h=document.documentElement;pg.style.transform=`scaleX(${h.scrollTop/(h.scrollHeight-h.clientHeight||1)})`},{passive:true});
+if(canHover&&!reduce)addEventListener('pointermove',e=>{$('cg').style.transform=`translate(${e.clientX}px,${e.clientY}px)`});else $('cg').style.display='none';
+const rio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rio.unobserve(e.target)}}),{threshold:.1});
+document.querySelectorAll('.rv').forEach(el=>rio.observe(el));
+
+/* headline scramble */
+const G='01{}<>/;=+*#$&';
+function scr(el,txt,delay){
+  clearInterval(el._t);if(reduce){el.textContent=txt;return}
+  let n=0;
+  setTimeout(()=>{el._t=setInterval(()=>{
+    n+=.45;const k=Math.floor(n);
+    el.textContent=txt.slice(0,k)+[...txt.slice(k)].map(c=>c===' '?' ':G[Math.random()*G.length|0]).join('');
+    if(k>=txt.length){clearInterval(el._t);el.textContent=txt}
+  },34)},delay);
+}
+const runH=()=>{scr(document.querySelector('.l1'),'Small tools.',0);scr(document.querySelector('.l2'),'Sharp results.',450)};
+runH();$('h1').addEventListener('mouseenter',runH);
+
+/* card tilt + glow */
+if(canHover&&!reduce)document.querySelectorAll('.card').forEach(c=>{
+  c.addEventListener('pointermove',e=>{
+    const r=c.getBoundingClientRect(),px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
+    c.style.setProperty('--ry',(px-.5)*7+'deg');c.style.setProperty('--rx',(.5-py)*7+'deg');
+    c.style.setProperty('--mx',px*100+'%');c.style.setProperty('--my',py*100+'%');
+  });
+  c.addEventListener('pointerleave',()=>{c.style.setProperty('--rx','0deg');c.style.setProperty('--ry','0deg')});
+});
+
+/* side nav magnet */
+const nav=$('snav'),keys=[...nav.querySelectorAll('.k')],desk=matchMedia('(min-width:760px) and (hover:hover)');
+if(!reduce){
+  nav.addEventListener('pointermove',e=>{
+    if(!desk.matches)return;
+    let hot=null,best=1e9;
+    keys.forEach(k=>{
+      const r=k.getBoundingClientRect(),d=Math.abs(e.clientY-(r.top+r.height/2)),f=Math.pow(Math.max(0,1-d/120),2);
+      k.classList.add('live');k.style.setProperty('--s',1+.8*f);k.style.setProperty('--x',12*f+'px');k.style.zIndex=Math.round(f*10);
+      if(d<best){best=d;hot=k}
+    });
+    keys.forEach(k=>k.classList.toggle('hot',k===hot));
+  });
+  nav.addEventListener('pointerleave',()=>keys.forEach(k=>{k.classList.remove('live','hot');k.style.removeProperty('--s');k.style.removeProperty('--x');k.style.zIndex=''}));
+}
+$('logout').addEventListener('click',()=>{try{sessionStorage.removeItem('cc_session')}catch(e){}});
+
+/* password strength */
+const pw=$('tool-password'),sf=$('strength-fill'),sfb=$('strength-feedback');
+pw.addEventListener('input',()=>{
+  const v=pw.value,ch=[v.length>=12,/[A-Z]/.test(v),/[a-z]/.test(v),/\d/.test(v),/[^A-Za-z0-9]/.test(v)],s=v?ch.filter(Boolean).length:0,tips=[];
+  sf.style.width=s/5*100+'%';
+  if(v){if(v.length<12)tips.push('use 12+ characters');if(!/[A-Z]/.test(v)||!/[a-z]/.test(v))tips.push('mix upper and lower case');if(!/\d/.test(v))tips.push('add a number');if(!/[^A-Za-z0-9]/.test(v))tips.push('add a symbol')}
+  say(sfb,['Start typing to see a rating.','Very weak','Weak','Fair','Strong','Excellent'][s]+(tips.length&&s<5?'. Try to '+tips.join(', ')+'.':''),s>=4);
+  led('strength',s>=4);
+});
+
+/* hash */
+$('hash-btn').addEventListener('click',async()=>{
+  const t=$('hash-input').value,o=$('hash-output');
+  if(!t){say(o,'Enter some text first.');return}
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));
+  say(o,Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''),true);led('hash');
+});
+
+/* generator */
+const gl=$('gen-length'),go=$('gen-output'),gc=$('gen-copy');
+gl.addEventListener('input',()=>$('gen-length-label').textContent=gl.value);
+$('gen-btn').addEventListener('click',()=>{
+  let pool='abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  if($('gen-symbols').checked)pool+='!@#$%^&*?-_=+';
+  go.textContent=Array.from(crypto.getRandomValues(new Uint32Array(+gl.value)),x=>pool[x%pool.length]).join('');led('gen');
+});
+gc.addEventListener('click',()=>{
+  const t=go.textContent;if(!t||t==='Press generate')return;
+  navigator.clipboard.writeText(t).then(()=>{gc.textContent='Copied';setTimeout(()=>gc.textContent='Copy',2000)});
+});
+
+/* ip */
+$('ip-btn').addEventListener('click',async()=>{
+  const o=$('ip-output');say(o,'Looking up...');
+  try{say(o,'Your public IP: '+(await(await fetch('https://api.ipify.org?format=json')).json()).ip,true);led('ip')}
+  catch(e){say(o,'Lookup failed. Check your connection and try again.')}
+});
+
+/* base64 */
+const bi=$('base64-input'),bo=$('base64-output');
+$('b64-encode').addEventListener('click',()=>{try{say(bo,btoa(String.fromCharCode(...new TextEncoder().encode(bi.value))),true);led('b64')}catch(e){say(bo,'Could not encode this text.')}});
+$('b64-decode').addEventListener('click',()=>{try{say(bo,new TextDecoder().decode(Uint8Array.from(atob(bi.value.trim()),c=>c.charCodeAt(0))),true);led('b64')}catch(e){say(bo,'That is not valid Base64.')}});
+
+/* qr */
+const qp=$('qr-preview'),qd=$('qr-download');
+$('qr-btn').addEventListener('click',()=>{
+  const t=$('qr-input').value.trim();if(!t)return;
+  qp.innerHTML='';qp.style.display='flex';new QRCode(qp,{text:t,width:128,height:128});qd.style.display='block';led('qr');
+});
+qd.addEventListener('click',()=>{
+  const c=qp.querySelector('canvas'),i=qp.querySelector('img'),a=document.createElement('a');
+  a.href=c?c.toDataURL('image/png'):i.src;a.download='ciphercode-qr.png';a.click();
+});
+
+/* logs */
+$('log-btn').addEventListener('click',()=>{
+  const L=$('log-input').value.split('\n').filter(Boolean),o=$('log-output');
+  if(!L.length){say(o,'Paste some log lines first.');return}
+  let w=0,e=0,i=0;
+  L.forEach(l=>{if(/\b(warn|warning)\b/i.test(l))w++;if(/\b(error|failed|denied)\b/i.test(l))e++;if(/\b(info|success)\b/i.test(l))i++});
+  say(o,`${L.length} lines: ${i} info, ${w} warnings, ${e} errors`,!e);led('log');
+});
+
+/* speed test */
+const sb=$('speed-btn'),isp=$('isp'),dS=$('download-speed'),uS=$('upload-speed'),needle=$('needle'),arc=$('arc'),ticks=$('ticks'),rd=$('rd'),rp=$('rp');
+const STEPS=[50,100,250,500,1000],sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let si=1,cur=0,jit=null,running=false;
+function drawTicks(){
+  const m=STEPS[si];let h='';
+  for(let i=0;i<=10;i++){
+    const t=(-135+27*i)*Math.PI/180,s=Math.sin(t),c=Math.cos(t),maj=i%2===0;
+    h+=`<line class="tick${maj?' m':''}" x1="${150+(maj?88:94)*s}" y1="${150-(maj?88:94)*c}" x2="${150+101*s}" y2="${150-101*c}"/>`;
+    if(maj)h+=`<text class="tl" x="${150+72*s}" y="${150-72*c}">${Math.round(m*i/10)}</text>`;
+  }
+  ticks.innerHTML=h;
+}
+const needleTo=f=>needle.style.transform=`rotate(${-135+270*f}deg)`;
+function gauge(v){
+  cur=v;
+  while(v>STEPS[si]*.92&&si<STEPS.length-1){si++;drawTicks()}
+  const f=Math.min(Math.max(v/STEPS[si],0),1);
+  needleTo(f);arc.style.strokeDashoffset=518.4*(1-f);
+  rd.textContent=v>=100?v.toFixed(0):v.toFixed(1);
+}
+function resetGauge(){si=1;drawTicks();gauge(0)}
+async function sweep(){
+  arc.style.strokeDashoffset=0;needleTo(1);await sleep(600);
+  arc.style.strokeDashoffset=518.4;needleTo(0);await sleep(600);
+}
+async function loadISP(){
+  const n=$('isp-name'),l=$('isp-loc');n.textContent='Detecting...';l.textContent='';
+  try{
+    const d=await(await fetch('https://ipwho.is/')).json();if(d.success===false)throw 0;
+    const c=d.connection||{};
+    n.textContent=c.isp||c.org||'Unknown provider';
+    l.textContent=[d.city,d.country].filter(Boolean).join(', ')||'Location unknown';
+  }catch(e){n.textContent='Provider not detected';l.textContent='Your network or browser blocked the lookup.'}
+}
+const phase=t=>say(isp,t);
+resetGauge();
+sb.addEventListener('click',async()=>{
+  if(running){running=false;return}
+  running=true;sb.textContent='Stop test';$('speed-actions').hidden=true;led('speed',false);
+  dS.textContent=uS.textContent='0';loadISP();
+  clearInterval(jit);
+  jit=setInterval(()=>{if(running&&cur>0)needleTo(Math.min(1,cur/STEPS[si]*(1+(Math.random()-.5)*.04)))},140);
+  rp.textContent='Warming up';phase('Warming up');resetGauge();
+  if(!reduce)await sweep();
+  const half=15000;let down=0,up=0;
+  rp.textContent='Download';phase('Testing download');resetGauge();
+  const t0=performance.now();
+  while(running&&performance.now()-t0<half){
+    try{const t=performance.now();const r=await fetch('https://speed.cloudflare.com/__down?bytes=10000000',{cache:'no-store'});await r.arrayBuffer();
+      const m=80000000/(((performance.now()-t)/1000)*1e6);if(m>down)down=m;
+      dS.textContent=down.toFixed(2);gauge(down)}catch(e){}
+  }
+  if(running){rp.textContent='Upload';phase('Testing upload');resetGauge()}
+  const t1=performance.now();
+  while(running&&performance.now()-t1<half){
+    try{const t=performance.now();await fetch('https://speed.cloudflare.com/__up',{method:'POST',body:new Uint8Array(2e6),cache:'no-store'});
+      const m=16000000/(((performance.now()-t)/1000)*1e6);if(m>up)up=m;
+      uS.textContent=up.toFixed(2);gauge(up)}catch(e){}
+  }
+  const done=running;running=false;clearInterval(jit);
+  sb.textContent=done?'Run again':'Start speed test';
+  rp.textContent=done?'Complete':'Stopped';phase(done?'Finished. Your results are above.':'Stopped');isp.classList.toggle('ok',done);
+  si=1;drawTicks();gauge(0);
+  $('speed-actions').hidden=!done;if(done)led('speed');
+});
+const resText=()=>`My CipherCodeAI speed test (${$('isp-name').textContent}):\nDownload: ${dS.textContent} Mbps\nUpload: ${uS.textContent} Mbps`;
+$('copy-result').addEventListener('click',e=>navigator.clipboard.writeText(resText()).then(()=>{e.target.textContent='Copied';setTimeout(()=>e.target.textContent='Copy result',2000)}));
+$('share-result').addEventListener('click',e=>{
+  if(navigator.share)navigator.share({title:'CipherCodeAI speed test',text:resText()});
+  else navigator.clipboard.writeText(resText()).then(()=>{e.target.textContent='Copied';setTimeout(()=>e.target.textContent='Share',2000)});
+});
+</script>
+</body>
+</html>
